@@ -221,11 +221,11 @@ Errors use the same shape:
 The `postman/` folder contains:
 
 - `Job Portal API.postman_collection.json` with Auth, Jobs and Applications folders
-- `Job Portal API.postman_environment.json` with `baseUrl`, token, `jobId` and `applicationId` variables
+- `Job Portal API.postman_environment.json` with `baseUrl`, token, `jobId`, `applicationId` and a few extra ids used by the close/delete examples
 
 Import both files into Postman and select the **Job Portal API** environment. The collection uses `{{baseUrl}}` everywhere and Bearer tokens on protected routes. Login requests save the returned tokens automatically, Create Job saves `{{jobId}}`, and Apply to a Job saves `{{applicationId}}`.
 
-The collection has 25 requests and 59 saved response examples. All examples are real responses from the API, including the failure cases.
+The collection has 27 requests and 63 saved response examples. All examples are real responses from the API, including the failure cases.
 
 ### Test accounts
 

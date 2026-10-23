@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "b6f4a0d8-5c1e-4a4e-9f6d-2a7c3e8b1d94",
     "name": "Job Portal API",
-    "description": "REST API for a job portal. Employers post jobs and review applications; candidates search jobs and apply. All paths use {{baseUrl}} and protected routes take a Bearer token.\n\nTest accounts (password secret123): aarav@example.com and nisha@example.com are employers, riya@example.com and arjun@example.com are candidates. The login requests fill the token variables automatically. Create Job saves {{jobId}} and Apply to a Job saves {{applicationId}}.\n\nThe saved examples were captured from the running API, including the failure cases.",
+    "description": "REST API for a job portal. Employers post jobs and review applications; candidates search jobs and apply. All paths use {{baseUrl}} and protected routes take a Bearer token.\n\nTest accounts (password secret123): aarav@example.com and nisha@example.com are employers, riya@example.com and arjun@example.com are candidates. The login requests fill the token variables automatically. Create Job saves {{jobId}} and Apply to a Job saves {{applicationId}}. Close Job and Delete Job use their own job variables so the main flow stays intact.\n\nThe saved examples were captured from the running API, including the failure cases.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -72,7 +72,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"User registered successfully\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhMGZlYjMwNTAzNzFkZDBlY2UwZCIsImlhdCI6MTc5Mjc3ODQ5NSwiZXhwIjoxNzkzMzgzMjk1fQ.SCjdKhxuQhnATk871pZvZcBOiDbrw_IsVZB-R-6_kZA\",\n  \"user\": {\n    \"id\": \"6adba0feb3050371dd0ece0d\",\n    \"name\": \"Riya Gurung\",\n    \"email\": \"riya@example.com\",\n    \"role\": \"candidate\",\n    \"createdAt\": \"2026-10-23T18:01:34.858Z\",\n    \"updatedAt\": \"2026-10-23T18:01:34.858Z\"\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"User registered successfully\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhZGRjYzZkNzQ2OWFhNDFjOWRjNSIsImlhdCI6MTc5Mjc4MTc4OSwiZXhwIjoxNzkzMzg2NTg5fQ.eltzYuiHfaVQUdyFMqK0MD3oyCT2p9pEw6YcdLpncRo\",\n  \"user\": {\n    \"id\": \"6adbaddcc6d7469aa41c9dc5\",\n    \"name\": \"Riya Gurung\",\n    \"email\": \"riya@example.com\",\n    \"role\": \"candidate\",\n    \"createdAt\": \"2026-10-23T18:56:28.690Z\",\n    \"updatedAt\": \"2026-10-23T18:56:28.690Z\"\n  }\n}",
               "_postman_previewlanguage": "json"
             },
             {
@@ -203,7 +203,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"User registered successfully\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhMGZmYjMwNTAzNzFkZDBlY2UwZSIsImlhdCI6MTc5Mjc3ODQ5NSwiZXhwIjoxNzkzMzgzMjk1fQ.i2he859--bQmz-zvmsQ6loL8zuuMAoZCRvhuvX_LHoI\",\n  \"user\": {\n    \"id\": \"6adba0ffb3050371dd0ece0e\",\n    \"name\": \"Aarav Shrestha\",\n    \"email\": \"aarav@example.com\",\n    \"role\": \"employer\",\n    \"createdAt\": \"2026-10-23T18:01:35.312Z\",\n    \"updatedAt\": \"2026-10-23T18:01:35.312Z\",\n    \"companyName\": \"Himalayan Tech\"\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"User registered successfully\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhZGRkYzZkNzQ2OWFhNDFjOWRjNiIsImlhdCI6MTc5Mjc4MTc4OSwiZXhwIjoxNzkzMzg2NTg5fQ.KLhrf2blje59sSsdiQgcRvsJy5L68fppYIX9Z8Trgb0\",\n  \"user\": {\n    \"id\": \"6adbadddc6d7469aa41c9dc6\",\n    \"name\": \"Aarav Shrestha\",\n    \"email\": \"aarav@example.com\",\n    \"role\": \"employer\",\n    \"createdAt\": \"2026-10-23T18:56:29.107Z\",\n    \"updatedAt\": \"2026-10-23T18:56:29.107Z\",\n    \"companyName\": \"Himalayan Tech\"\n  }\n}",
               "_postman_previewlanguage": "json"
             },
             {
@@ -236,6 +236,38 @@
                 }
               ],
               "body": "{\n  \"success\": false,\n  \"message\": \"Company name is required for employers\"\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Register Employer - 409 Duplicate Email",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/auth/register",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Aarav Shrestha\",\n  \"email\": \"aarav@example.com\",\n  \"password\": \"secret123\",\n  \"role\": \"employer\",\n  \"companyName\": \"Himalayan Tech\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Email is already registered\"\n}",
               "_postman_previewlanguage": "json"
             }
           ]
@@ -302,7 +334,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"User registered successfully\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhMGZmYjMwNTAzNzFkZDBlY2UwZiIsImlhdCI6MTc5Mjc3ODQ5NSwiZXhwIjoxNzkzMzgzMjk1fQ.kOkNp-IL8M7jYiPEnBqznYao4zks2Tijnfxwwv4AXi8\",\n  \"user\": {\n    \"id\": \"6adba0ffb3050371dd0ece0f\",\n    \"name\": \"Nisha Karki\",\n    \"email\": \"nisha@example.com\",\n    \"role\": \"employer\",\n    \"createdAt\": \"2026-10-23T18:01:35.625Z\",\n    \"updatedAt\": \"2026-10-23T18:01:35.625Z\",\n    \"companyName\": \"Everest Labs\"\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"User registered successfully\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhZGRkYzZkNzQ2OWFhNDFjOWRjNyIsImlhdCI6MTc5Mjc4MTc4OSwiZXhwIjoxNzkzMzg2NTg5fQ.aqQRzEYBKhcAtL_1B6cVnlWuickvlR_ccf3gXViQxIg\",\n  \"user\": {\n    \"id\": \"6adbadddc6d7469aa41c9dc7\",\n    \"name\": \"Nisha Karki\",\n    \"email\": \"nisha@example.com\",\n    \"role\": \"employer\",\n    \"createdAt\": \"2026-10-23T18:56:29.517Z\",\n    \"updatedAt\": \"2026-10-23T18:56:29.517Z\",\n    \"companyName\": \"Everest Labs\"\n  }\n}",
               "_postman_previewlanguage": "json"
             }
           ]
@@ -369,7 +401,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"User registered successfully\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhMGZmYjMwNTAzNzFkZDBlY2UxMCIsImlhdCI6MTc5Mjc3ODQ5NiwiZXhwIjoxNzkzMzgzMjk2fQ.0xGYTUQcycDqs2PaIJOua7U6W6uIFyRxS2mHKF528OA\",\n  \"user\": {\n    \"id\": \"6adba0ffb3050371dd0ece10\",\n    \"name\": \"Arjun Thapa\",\n    \"email\": \"arjun@example.com\",\n    \"role\": \"candidate\",\n    \"createdAt\": \"2026-10-23T18:01:35.961Z\",\n    \"updatedAt\": \"2026-10-23T18:01:35.961Z\"\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"User registered successfully\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhZGRkYzZkNzQ2OWFhNDFjOWRjOCIsImlhdCI6MTc5Mjc4MTc5MCwiZXhwIjoxNzkzMzg2NTkwfQ.XwlI3V8TByxIXEkp41gNubUMbb3tTJwLWQ-FwXWyExA\",\n  \"user\": {\n    \"id\": \"6adbadddc6d7469aa41c9dc8\",\n    \"name\": \"Arjun Thapa\",\n    \"email\": \"arjun@example.com\",\n    \"role\": \"candidate\",\n    \"createdAt\": \"2026-10-23T18:56:29.974Z\",\n    \"updatedAt\": \"2026-10-23T18:56:29.974Z\"\n  }\n}",
               "_postman_previewlanguage": "json"
             }
           ]
@@ -436,7 +468,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhMGZmYjMwNTAzNzFkZDBlY2UwZSIsImlhdCI6MTc5Mjc3ODQ5NywiZXhwIjoxNzkzMzgzMjk3fQ.oXpsu39cQecKkF73ww0X85CM32agApWMscPPEObBeEg\",\n  \"user\": {\n    \"id\": \"6adba0ffb3050371dd0ece0e\",\n    \"name\": \"Aarav Shrestha\",\n    \"email\": \"aarav@example.com\",\n    \"role\": \"employer\",\n    \"createdAt\": \"2026-10-23T18:01:35.312Z\",\n    \"updatedAt\": \"2026-10-23T18:01:35.312Z\",\n    \"companyName\": \"Himalayan Tech\"\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhZGRkYzZkNzQ2OWFhNDFjOWRjNiIsImlhdCI6MTc5Mjc4MTc5MSwiZXhwIjoxNzkzMzg2NTkxfQ.UNYJdaknU7094jQM1Q32JHkKs73sPB2QoYEzer4ZO9Q\",\n  \"user\": {\n    \"id\": \"6adbadddc6d7469aa41c9dc6\",\n    \"name\": \"Aarav Shrestha\",\n    \"email\": \"aarav@example.com\",\n    \"role\": \"employer\",\n    \"createdAt\": \"2026-10-23T18:56:29.107Z\",\n    \"updatedAt\": \"2026-10-23T18:56:29.107Z\",\n    \"companyName\": \"Himalayan Tech\"\n  }\n}",
               "_postman_previewlanguage": "json"
             },
             {
@@ -550,7 +582,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhMGZlYjMwNTAzNzFkZDBlY2UwZCIsImlhdCI6MTc5Mjc3ODQ5OCwiZXhwIjoxNzkzMzgzMjk4fQ.7hkCyF1jsKjPWY9smhA3qGRW3VzlnhlBbMcf2Ozmwlw\",\n  \"user\": {\n    \"id\": \"6adba0feb3050371dd0ece0d\",\n    \"name\": \"Riya Gurung\",\n    \"email\": \"riya@example.com\",\n    \"role\": \"candidate\",\n    \"createdAt\": \"2026-10-23T18:01:34.858Z\",\n    \"updatedAt\": \"2026-10-23T18:01:34.858Z\"\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhZGRjYzZkNzQ2OWFhNDFjOWRjNSIsImlhdCI6MTc5Mjc4MTc5MiwiZXhwIjoxNzkzMzg2NTkyfQ.CwKwc8PLs77wOMvWI5aOMXOizxcBG7B1KUdYLmuOtSs\",\n  \"user\": {\n    \"id\": \"6adbaddcc6d7469aa41c9dc5\",\n    \"name\": \"Riya Gurung\",\n    \"email\": \"riya@example.com\",\n    \"role\": \"candidate\",\n    \"createdAt\": \"2026-10-23T18:56:28.690Z\",\n    \"updatedAt\": \"2026-10-23T18:56:28.690Z\"\n  }\n}",
               "_postman_previewlanguage": "json"
             },
             {
@@ -664,7 +696,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhMGZmYjMwNTAzNzFkZDBlY2UwZiIsImlhdCI6MTc5Mjc3ODQ5OCwiZXhwIjoxNzkzMzgzMjk4fQ.w5QwBdrcHk4uNkcWM__VY562xtBnQbmUgulyjMULD8k\",\n  \"user\": {\n    \"id\": \"6adba0ffb3050371dd0ece0f\",\n    \"name\": \"Nisha Karki\",\n    \"email\": \"nisha@example.com\",\n    \"role\": \"employer\",\n    \"createdAt\": \"2026-10-23T18:01:35.625Z\",\n    \"updatedAt\": \"2026-10-23T18:01:35.625Z\",\n    \"companyName\": \"Everest Labs\"\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhZGRkYzZkNzQ2OWFhNDFjOWRjNyIsImlhdCI6MTc5Mjc4MTc5MywiZXhwIjoxNzkzMzg2NTkzfQ.hnxYEqvE_m9hfdij2Z3kCwaaTTZeVUpZGUWFPx55BJI\",\n  \"user\": {\n    \"id\": \"6adbadddc6d7469aa41c9dc7\",\n    \"name\": \"Nisha Karki\",\n    \"email\": \"nisha@example.com\",\n    \"role\": \"employer\",\n    \"createdAt\": \"2026-10-23T18:56:29.517Z\",\n    \"updatedAt\": \"2026-10-23T18:56:29.517Z\",\n    \"companyName\": \"Everest Labs\"\n  }\n}",
               "_postman_previewlanguage": "json"
             }
           ],
@@ -746,7 +778,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhMGZmYjMwNTAzNzFkZDBlY2UxMCIsImlhdCI6MTc5Mjc3ODQ5OSwiZXhwIjoxNzkzMzgzMjk5fQ.n_dNTGQByqbLlek_ngxhGnUZlA-7vhu1_3ImKwYUSs0\",\n  \"user\": {\n    \"id\": \"6adba0ffb3050371dd0ece10\",\n    \"name\": \"Arjun Thapa\",\n    \"email\": \"arjun@example.com\",\n    \"role\": \"candidate\",\n    \"createdAt\": \"2026-10-23T18:01:35.961Z\",\n    \"updatedAt\": \"2026-10-23T18:01:35.961Z\"\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhZGRkYzZkNzQ2OWFhNDFjOWRjOCIsImlhdCI6MTc5Mjc4MTc5MywiZXhwIjoxNzkzMzg2NTkzfQ.1zNgBH5acfZOhs-5AgKIouXMMvhWgNupj6883Lwn_d4\",\n  \"user\": {\n    \"id\": \"6adbadddc6d7469aa41c9dc8\",\n    \"name\": \"Arjun Thapa\",\n    \"email\": \"arjun@example.com\",\n    \"role\": \"candidate\",\n    \"createdAt\": \"2026-10-23T18:56:29.974Z\",\n    \"updatedAt\": \"2026-10-23T18:56:29.974Z\"\n  }\n}",
               "_postman_previewlanguage": "json"
             }
           ],
@@ -820,7 +852,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Profile fetched\",\n  \"user\": {\n    \"id\": \"6adba0feb3050371dd0ece0d\",\n    \"name\": \"Riya Gurung\",\n    \"email\": \"riya@example.com\",\n    \"role\": \"candidate\",\n    \"createdAt\": \"2026-10-23T18:01:34.858Z\",\n    \"updatedAt\": \"2026-10-23T18:01:34.858Z\"\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"Profile fetched\",\n  \"user\": {\n    \"id\": \"6adbaddcc6d7469aa41c9dc5\",\n    \"name\": \"Riya Gurung\",\n    \"email\": \"riya@example.com\",\n    \"role\": \"candidate\",\n    \"createdAt\": \"2026-10-23T18:56:28.690Z\",\n    \"updatedAt\": \"2026-10-23T18:56:28.690Z\"\n  }\n}",
               "_postman_previewlanguage": "json"
             },
             {
@@ -930,7 +962,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Job created\",\n  \"job\": {\n    \"title\": \"Backend Developer\",\n    \"description\": \"Build and maintain Node.js services for our booking platform and internal tools.\",\n    \"companyName\": \"Himalayan Tech\",\n    \"location\": \"Kathmandu\",\n    \"type\": \"full-time\",\n    \"salary\": 90000,\n    \"skills\": [\n      \"Node.js\",\n      \"Express\",\n      \"MongoDB\",\n      \"REST APIs\"\n    ],\n    \"status\": \"open\",\n    \"postedBy\": \"6adba0ffb3050371dd0ece0e\",\n    \"_id\": \"6adba103b3050371dd0ece11\",\n    \"createdAt\": \"2026-10-23T18:01:39.427Z\",\n    \"updatedAt\": \"2026-10-23T18:01:39.427Z\",\n    \"__v\": 0\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"Job created\",\n  \"job\": {\n    \"title\": \"Backend Developer\",\n    \"description\": \"Build and maintain Node.js services for our booking platform and internal tools.\",\n    \"companyName\": \"Himalayan Tech\",\n    \"location\": \"Kathmandu\",\n    \"type\": \"full-time\",\n    \"salary\": 90000,\n    \"skills\": [\n      \"Node.js\",\n      \"Express\",\n      \"MongoDB\",\n      \"REST APIs\"\n    ],\n    \"status\": \"open\",\n    \"postedBy\": \"6adbadddc6d7469aa41c9dc6\",\n    \"_id\": \"6adbade1c6d7469aa41c9dc9\",\n    \"createdAt\": \"2026-10-23T18:56:33.818Z\",\n    \"updatedAt\": \"2026-10-23T18:56:33.818Z\",\n    \"__v\": 0\n  }\n}",
               "_postman_previewlanguage": "json"
             },
             {
@@ -1147,7 +1179,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Job created\",\n  \"job\": {\n    \"title\": \"React Developer\",\n    \"description\": \"Work on the customer-facing dashboard and the design system.\",\n    \"companyName\": \"Himalayan Tech\",\n    \"location\": \"Kathmandu\",\n    \"type\": \"remote\",\n    \"salary\": 85000,\n    \"skills\": [\n      \"React\",\n      \"JavaScript\",\n      \"CSS\"\n    ],\n    \"status\": \"open\",\n    \"postedBy\": \"6adba0ffb3050371dd0ece0e\",\n    \"_id\": \"6adba103b3050371dd0ece12\",\n    \"createdAt\": \"2026-10-23T18:01:39.710Z\",\n    \"updatedAt\": \"2026-10-23T18:01:39.710Z\",\n    \"__v\": 0\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"Job created\",\n  \"job\": {\n    \"title\": \"React Developer\",\n    \"description\": \"Work on the customer-facing dashboard and the design system.\",\n    \"companyName\": \"Himalayan Tech\",\n    \"location\": \"Kathmandu\",\n    \"type\": \"remote\",\n    \"salary\": 85000,\n    \"skills\": [\n      \"React\",\n      \"JavaScript\",\n      \"CSS\"\n    ],\n    \"status\": \"open\",\n    \"postedBy\": \"6adbadddc6d7469aa41c9dc6\",\n    \"_id\": \"6adbade1c6d7469aa41c9dca\",\n    \"createdAt\": \"2026-10-23T18:56:33.982Z\",\n    \"updatedAt\": \"2026-10-23T18:56:33.982Z\",\n    \"__v\": 0\n  }\n}",
               "_postman_previewlanguage": "json"
             }
           ],
@@ -1248,8 +1280,210 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Job created\",\n  \"job\": {\n    \"title\": \"Data Analyst Intern\",\n    \"description\": \"Help the analytics team prepare weekly reports and clean incoming data.\",\n    \"companyName\": \"Everest Labs\",\n    \"location\": \"Pokhara\",\n    \"type\": \"internship\",\n    \"salary\": 25000,\n    \"skills\": [\n      \"SQL\",\n      \"Excel\"\n    ],\n    \"status\": \"open\",\n    \"postedBy\": \"6adba0ffb3050371dd0ece0f\",\n    \"_id\": \"6adba103b3050371dd0ece13\",\n    \"createdAt\": \"2026-10-23T18:01:39.918Z\",\n    \"updatedAt\": \"2026-10-23T18:01:39.918Z\",\n    \"__v\": 0\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"Job created\",\n  \"job\": {\n    \"title\": \"Data Analyst Intern\",\n    \"description\": \"Help the analytics team prepare weekly reports and clean incoming data.\",\n    \"companyName\": \"Everest Labs\",\n    \"location\": \"Pokhara\",\n    \"type\": \"internship\",\n    \"salary\": 25000,\n    \"skills\": [\n      \"SQL\",\n      \"Excel\"\n    ],\n    \"status\": \"open\",\n    \"postedBy\": \"6adbadddc6d7469aa41c9dc7\",\n    \"_id\": \"6adbade2c6d7469aa41c9dcb\",\n    \"createdAt\": \"2026-10-23T18:56:34.143Z\",\n    \"updatedAt\": \"2026-10-23T18:56:34.143Z\",\n    \"__v\": 0\n  }\n}",
               "_postman_previewlanguage": "json"
+            }
+          ]
+        },
+        {
+          "name": "Create Job (To Close)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs"
+              ]
+            },
+            "description": "Employer only. A job used by the Close Job request so the main job stays open for the application flow. Saves {{closeJobId}}.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Marketing Associate\",\n  \"description\": \"Plan campaigns and write content for our product launches.\",\n  \"companyName\": \"Himalayan Tech\",\n  \"location\": \"Kathmandu\",\n  \"type\": \"full-time\",\n  \"salary\": 45000,\n  \"skills\": [\n    \"SEO\",\n    \"Content\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employerToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Create Job (To Close) - 201 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/jobs",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Marketing Associate\",\n  \"description\": \"Plan campaigns and write content for our product launches.\",\n  \"companyName\": \"Himalayan Tech\",\n  \"location\": \"Kathmandu\",\n  \"type\": \"full-time\",\n  \"salary\": 45000,\n  \"skills\": [\n    \"SEO\",\n    \"Content\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Job created\",\n  \"job\": {\n    \"title\": \"Marketing Associate\",\n    \"description\": \"Plan campaigns and write content for our product launches.\",\n    \"companyName\": \"Himalayan Tech\",\n    \"location\": \"Kathmandu\",\n    \"type\": \"full-time\",\n    \"salary\": 45000,\n    \"skills\": [\n      \"SEO\",\n      \"Content\"\n    ],\n    \"status\": \"open\",\n    \"postedBy\": \"6adbadddc6d7469aa41c9dc6\",\n    \"_id\": \"6adbade2c6d7469aa41c9dcc\",\n    \"createdAt\": \"2026-10-23T18:56:34.322Z\",\n    \"updatedAt\": \"2026-10-23T18:56:34.322Z\",\n    \"__v\": 0\n  }\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "",
+                  "if (pm.response.code === 201) {",
+                  "  pm.environment.set('closeJobId', body.job._id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Job (To Delete)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs"
+              ]
+            },
+            "description": "Employer only. A job used by the Delete Job request so the other examples keep their data. Saves {{deleteJobId}}.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Office Coordinator\",\n  \"description\": \"Handle scheduling, files and day to day office tasks.\",\n  \"companyName\": \"Himalayan Tech\",\n  \"location\": \"Bhaktapur\",\n  \"type\": \"part-time\",\n  \"salary\": 35000,\n  \"skills\": [\n    \"Organisation\",\n    \"Communication\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employerToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Create Job (To Delete) - 201 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/jobs",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Office Coordinator\",\n  \"description\": \"Handle scheduling, files and day to day office tasks.\",\n  \"companyName\": \"Himalayan Tech\",\n  \"location\": \"Bhaktapur\",\n  \"type\": \"part-time\",\n  \"salary\": 35000,\n  \"skills\": [\n    \"Organisation\",\n    \"Communication\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Job created\",\n  \"job\": {\n    \"title\": \"Office Coordinator\",\n    \"description\": \"Handle scheduling, files and day to day office tasks.\",\n    \"companyName\": \"Himalayan Tech\",\n    \"location\": \"Bhaktapur\",\n    \"type\": \"part-time\",\n    \"salary\": 35000,\n    \"skills\": [\n      \"Organisation\",\n      \"Communication\"\n    ],\n    \"status\": \"open\",\n    \"postedBy\": \"6adbadddc6d7469aa41c9dc6\",\n    \"_id\": \"6adbade2c6d7469aa41c9dcd\",\n    \"createdAt\": \"2026-10-23T18:56:34.411Z\",\n    \"updatedAt\": \"2026-10-23T18:56:34.411Z\",\n    \"__v\": 0\n  }\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "",
+                  "if (pm.response.code === 201) {",
+                  "  pm.environment.set('deleteJobId', body.job._id);",
+                  "}"
+                ]
+              }
             }
           ]
         },
@@ -1296,7 +1530,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"total\": 5,\n  \"page\": 1,\n  \"pages\": 3,\n  \"count\": 2,\n  \"data\": [\n    {\n      \"_id\": \"6adba104b3050371dd0ece15\",\n      \"title\": \"Marketing Associate\",\n      \"description\": \"Plan campaigns and write content for our product launches.\",\n      \"companyName\": \"Himalayan Tech\",\n      \"location\": \"Kathmandu\",\n      \"type\": \"full-time\",\n      \"salary\": 45000,\n      \"skills\": [\n        \"SEO\",\n        \"Content\"\n      ],\n      \"status\": \"closed\",\n      \"postedBy\": {\n        \"_id\": \"6adba0ffb3050371dd0ece0e\",\n        \"name\": \"Aarav Shrestha\",\n        \"companyName\": \"Himalayan Tech\"\n      },\n      \"createdAt\": \"2026-10-23T18:01:40.321Z\",\n      \"updatedAt\": \"2026-10-23T18:01:40.516Z\",\n      \"__v\": 0\n    },\n    {\n      \"_id\": \"6adba104b3050371dd0ece14\",\n      \"title\": \"Support Engineer\",\n      \"description\": \"Help customers with setup, billing and technical questions.\",\n      \"companyName\": \"Everest Labs\",\n      \"location\": \"Lalitpur\",\n      \"type\": \"part-time\",\n      \"salary\": 40000,\n      \"skills\": [\n        \"Linux\",\n        \"Communication\"\n      ],\n      \"status\": \"open\",\n      \"postedBy\": {\n        \"_id\": \"6adba0ffb3050371dd0ece0f\",\n        \"name\": \"Nisha Karki\",\n        \"companyName\": \"Everest Labs\"\n      },\n      \"createdAt\": \"2026-10-23T18:01:40.080Z\",\n      \"updatedAt\": \"2026-10-23T18:01:40.080Z\",\n      \"__v\": 0\n    }\n  ]\n}",
+              "body": "{\n  \"success\": true,\n  \"total\": 5,\n  \"page\": 1,\n  \"pages\": 3,\n  \"count\": 2,\n  \"data\": [\n    {\n      \"_id\": \"6adbade2c6d7469aa41c9dcd\",\n      \"title\": \"Office Coordinator\",\n      \"description\": \"Handle scheduling, files and day to day office tasks.\",\n      \"companyName\": \"Himalayan Tech\",\n      \"location\": \"Bhaktapur\",\n      \"type\": \"part-time\",\n      \"salary\": 35000,\n      \"skills\": [\n        \"Organisation\",\n        \"Communication\"\n      ],\n      \"status\": \"open\",\n      \"postedBy\": {\n        \"_id\": \"6adbadddc6d7469aa41c9dc6\",\n        \"name\": \"Aarav Shrestha\",\n        \"companyName\": \"Himalayan Tech\"\n      },\n      \"createdAt\": \"2026-10-23T18:56:34.411Z\",\n      \"updatedAt\": \"2026-10-23T18:56:34.411Z\",\n      \"__v\": 0\n    },\n    {\n      \"_id\": \"6adbade2c6d7469aa41c9dcc\",\n      \"title\": \"Marketing Associate\",\n      \"description\": \"Plan campaigns and write content for our product launches.\",\n      \"companyName\": \"Himalayan Tech\",\n      \"location\": \"Kathmandu\",\n      \"type\": \"full-time\",\n      \"salary\": 45000,\n      \"skills\": [\n        \"SEO\",\n        \"Content\"\n      ],\n      \"status\": \"closed\",\n      \"postedBy\": {\n        \"_id\": \"6adbadddc6d7469aa41c9dc6\",\n        \"name\": \"Aarav Shrestha\",\n        \"companyName\": \"Himalayan Tech\"\n      },\n      \"createdAt\": \"2026-10-23T18:56:34.322Z\",\n      \"updatedAt\": \"2026-10-23T18:56:34.533Z\",\n      \"__v\": 0\n    }\n  ]\n}",
               "_postman_previewlanguage": "json"
             },
             {
@@ -1314,7 +1548,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"total\": 1,\n  \"page\": 1,\n  \"pages\": 1,\n  \"count\": 1,\n  \"data\": [\n    {\n      \"_id\": \"6adba103b3050371dd0ece12\",\n      \"title\": \"React Developer\",\n      \"description\": \"Work on the customer-facing dashboard and the design system.\",\n      \"companyName\": \"Himalayan Tech\",\n      \"location\": \"Kathmandu\",\n      \"type\": \"remote\",\n      \"salary\": 85000,\n      \"skills\": [\n        \"React\",\n        \"JavaScript\",\n        \"CSS\"\n      ],\n      \"status\": \"open\",\n      \"postedBy\": {\n        \"_id\": \"6adba0ffb3050371dd0ece0e\",\n        \"name\": \"Aarav Shrestha\",\n        \"companyName\": \"Himalayan Tech\"\n      },\n      \"createdAt\": \"2026-10-23T18:01:39.710Z\",\n      \"updatedAt\": \"2026-10-23T18:01:39.710Z\",\n      \"__v\": 0\n    }\n  ]\n}",
+              "body": "{\n  \"success\": true,\n  \"total\": 1,\n  \"page\": 1,\n  \"pages\": 1,\n  \"count\": 1,\n  \"data\": [\n    {\n      \"_id\": \"6adbade1c6d7469aa41c9dca\",\n      \"title\": \"React Developer\",\n      \"description\": \"Work on the customer-facing dashboard and the design system.\",\n      \"companyName\": \"Himalayan Tech\",\n      \"location\": \"Kathmandu\",\n      \"type\": \"remote\",\n      \"salary\": 85000,\n      \"skills\": [\n        \"React\",\n        \"JavaScript\",\n        \"CSS\"\n      ],\n      \"status\": \"open\",\n      \"postedBy\": {\n        \"_id\": \"6adbadddc6d7469aa41c9dc6\",\n        \"name\": \"Aarav Shrestha\",\n        \"companyName\": \"Himalayan Tech\"\n      },\n      \"createdAt\": \"2026-10-23T18:56:33.982Z\",\n      \"updatedAt\": \"2026-10-23T18:56:33.982Z\",\n      \"__v\": 0\n    }\n  ]\n}",
               "_postman_previewlanguage": "json"
             },
             {
@@ -1332,7 +1566,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"total\": 5,\n  \"page\": 1,\n  \"pages\": 2,\n  \"count\": 3,\n  \"data\": [\n    {\n      \"_id\": \"6adba103b3050371dd0ece13\",\n      \"title\": \"Data Analyst Intern\",\n      \"description\": \"Help the analytics team prepare weekly reports and clean incoming data.\",\n      \"companyName\": \"Everest Labs\",\n      \"location\": \"Pokhara\",\n      \"type\": \"internship\",\n      \"salary\": 25000,\n      \"skills\": [\n        \"SQL\",\n        \"Excel\"\n      ],\n      \"status\": \"open\",\n      \"postedBy\": {\n        \"_id\": \"6adba0ffb3050371dd0ece0f\",\n        \"name\": \"Nisha Karki\",\n        \"companyName\": \"Everest Labs\"\n      },\n      \"createdAt\": \"2026-10-23T18:01:39.918Z\",\n      \"updatedAt\": \"2026-10-23T18:01:39.918Z\",\n      \"__v\": 0\n    },\n    {\n      \"_id\": \"6adba104b3050371dd0ece14\",\n      \"title\": \"Support Engineer\",\n      \"description\": \"Help customers with setup, billing and technical questions.\",\n      \"companyName\": \"Everest Labs\",\n      \"location\": \"Lalitpur\",\n      \"type\": \"part-time\",\n      \"salary\": 40000,\n      \"skills\": [\n        \"Linux\",\n        \"Communication\"\n      ],\n      \"status\": \"open\",\n      \"postedBy\": {\n        \"_id\": \"6adba0ffb3050371dd0ece0f\",\n        \"name\": \"Nisha Karki\",\n        \"companyName\": \"Everest Labs\"\n      },\n      \"createdAt\": \"2026-10-23T18:01:40.080Z\",\n      \"updatedAt\": \"2026-10-23T18:01:40.080Z\",\n      \"__v\": 0\n    },\n    {\n      \"_id\": \"6adba104b3050371dd0ece15\",\n      \"title\": \"Marketing Associate\",\n      \"description\": \"Plan campaigns and write content for our product launches.\",\n      \"companyName\": \"Himalayan Tech\",\n      \"location\": \"Kathmandu\",\n      \"type\": \"full-time\",\n      \"salary\": 45000,\n      \"skills\": [\n        \"SEO\",\n        \"Content\"\n      ],\n      \"status\": \"closed\",\n      \"postedBy\": {\n        \"_id\": \"6adba0ffb3050371dd0ece0e\",\n        \"name\": \"Aarav Shrestha\",\n        \"companyName\": \"Himalayan Tech\"\n      },\n      \"createdAt\": \"2026-10-23T18:01:40.321Z\",\n      \"updatedAt\": \"2026-10-23T18:01:40.516Z\",\n      \"__v\": 0\n    }\n  ]\n}",
+              "body": "{\n  \"success\": true,\n  \"total\": 5,\n  \"page\": 1,\n  \"pages\": 2,\n  \"count\": 3,\n  \"data\": [\n    {\n      \"_id\": \"6adbade2c6d7469aa41c9dcb\",\n      \"title\": \"Data Analyst Intern\",\n      \"description\": \"Help the analytics team prepare weekly reports and clean incoming data.\",\n      \"companyName\": \"Everest Labs\",\n      \"location\": \"Pokhara\",\n      \"type\": \"internship\",\n      \"salary\": 25000,\n      \"skills\": [\n        \"SQL\",\n        \"Excel\"\n      ],\n      \"status\": \"open\",\n      \"postedBy\": {\n        \"_id\": \"6adbadddc6d7469aa41c9dc7\",\n        \"name\": \"Nisha Karki\",\n        \"companyName\": \"Everest Labs\"\n      },\n      \"createdAt\": \"2026-10-23T18:56:34.143Z\",\n      \"updatedAt\": \"2026-10-23T18:56:34.143Z\",\n      \"__v\": 0\n    },\n    {\n      \"_id\": \"6adbade2c6d7469aa41c9dcd\",\n      \"title\": \"Office Coordinator\",\n      \"description\": \"Handle scheduling, files and day to day office tasks.\",\n      \"companyName\": \"Himalayan Tech\",\n      \"location\": \"Bhaktapur\",\n      \"type\": \"part-time\",\n      \"salary\": 35000,\n      \"skills\": [\n        \"Organisation\",\n        \"Communication\"\n      ],\n      \"status\": \"open\",\n      \"postedBy\": {\n        \"_id\": \"6adbadddc6d7469aa41c9dc6\",\n        \"name\": \"Aarav Shrestha\",\n        \"companyName\": \"Himalayan Tech\"\n      },\n      \"createdAt\": \"2026-10-23T18:56:34.411Z\",\n      \"updatedAt\": \"2026-10-23T18:56:34.411Z\",\n      \"__v\": 0\n    },\n    {\n      \"_id\": \"6adbade2c6d7469aa41c9dcc\",\n      \"title\": \"Marketing Associate\",\n      \"description\": \"Plan campaigns and write content for our product launches.\",\n      \"companyName\": \"Himalayan Tech\",\n      \"location\": \"Kathmandu\",\n      \"type\": \"full-time\",\n      \"salary\": 45000,\n      \"skills\": [\n        \"SEO\",\n        \"Content\"\n      ],\n      \"status\": \"closed\",\n      \"postedBy\": {\n        \"_id\": \"6adbadddc6d7469aa41c9dc6\",\n        \"name\": \"Aarav Shrestha\",\n        \"companyName\": \"Himalayan Tech\"\n      },\n      \"createdAt\": \"2026-10-23T18:56:34.322Z\",\n      \"updatedAt\": \"2026-10-23T18:56:34.533Z\",\n      \"__v\": 0\n    }\n  ]\n}",
               "_postman_previewlanguage": "json"
             },
             {
@@ -1407,7 +1641,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Job fetched\",\n  \"job\": {\n    \"_id\": \"6adba103b3050371dd0ece11\",\n    \"title\": \"Backend Developer\",\n    \"description\": \"Build and maintain Node.js services for our booking platform and internal tools.\",\n    \"companyName\": \"Himalayan Tech\",\n    \"location\": \"Kathmandu\",\n    \"type\": \"full-time\",\n    \"salary\": 90000,\n    \"skills\": [\n      \"Node.js\",\n      \"Express\",\n      \"MongoDB\",\n      \"REST APIs\"\n    ],\n    \"status\": \"open\",\n    \"postedBy\": {\n      \"_id\": \"6adba0ffb3050371dd0ece0e\",\n      \"name\": \"Aarav Shrestha\",\n      \"companyName\": \"Himalayan Tech\"\n    },\n    \"createdAt\": \"2026-10-23T18:01:39.427Z\",\n    \"updatedAt\": \"2026-10-23T18:01:39.427Z\",\n    \"__v\": 0\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"Job fetched\",\n  \"job\": {\n    \"_id\": \"6adbade1c6d7469aa41c9dc9\",\n    \"title\": \"Backend Developer\",\n    \"description\": \"Build and maintain Node.js services for our booking platform and internal tools.\",\n    \"companyName\": \"Himalayan Tech\",\n    \"location\": \"Kathmandu\",\n    \"type\": \"full-time\",\n    \"salary\": 90000,\n    \"skills\": [\n      \"Node.js\",\n      \"Express\",\n      \"MongoDB\",\n      \"REST APIs\"\n    ],\n    \"status\": \"open\",\n    \"postedBy\": {\n      \"_id\": \"6adbadddc6d7469aa41c9dc6\",\n      \"name\": \"Aarav Shrestha\",\n      \"companyName\": \"Himalayan Tech\"\n    },\n    \"createdAt\": \"2026-10-23T18:56:33.818Z\",\n    \"updatedAt\": \"2026-10-23T18:56:33.818Z\",\n    \"__v\": 0\n  }\n}",
               "_postman_previewlanguage": "json"
             },
             {
@@ -1530,7 +1764,49 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Job updated\",\n  \"job\": {\n    \"_id\": \"6adba103b3050371dd0ece11\",\n    \"title\": \"Backend Developer\",\n    \"description\": \"Build and maintain Node.js services for our booking platform and internal tools.\",\n    \"companyName\": \"Himalayan Tech\",\n    \"location\": \"Kathmandu\",\n    \"type\": \"full-time\",\n    \"salary\": 95000,\n    \"skills\": [\n      \"Node.js\",\n      \"Express\",\n      \"MongoDB\",\n      \"REST APIs\",\n      \"AWS\"\n    ],\n    \"status\": \"open\",\n    \"postedBy\": \"6adba0ffb3050371dd0ece0e\",\n    \"createdAt\": \"2026-10-23T18:01:39.427Z\",\n    \"updatedAt\": \"2026-10-23T18:01:41.593Z\",\n    \"__v\": 1\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"Job updated\",\n  \"job\": {\n    \"_id\": \"6adbade1c6d7469aa41c9dc9\",\n    \"title\": \"Backend Developer\",\n    \"description\": \"Build and maintain Node.js services for our booking platform and internal tools.\",\n    \"companyName\": \"Himalayan Tech\",\n    \"location\": \"Kathmandu\",\n    \"type\": \"full-time\",\n    \"salary\": 95000,\n    \"skills\": [\n      \"Node.js\",\n      \"Express\",\n      \"MongoDB\",\n      \"REST APIs\",\n      \"AWS\"\n    ],\n    \"status\": \"open\",\n    \"postedBy\": \"6adbadddc6d7469aa41c9dc6\",\n    \"createdAt\": \"2026-10-23T18:56:33.818Z\",\n    \"updatedAt\": \"2026-10-23T18:56:35.197Z\",\n    \"__v\": 1\n  }\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Update Job - 400 Empty Body",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/jobs/{{jobId}}",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"No valid fields to update\"\n}",
               "_postman_previewlanguage": "json"
             },
             {
@@ -1625,14 +1901,14 @@
             "method": "PATCH",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/jobs/{{jobId}}/close",
+              "raw": "{{baseUrl}}/api/jobs/{{closeJobId}}/close",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
                 "jobs",
-                "{{jobId}}",
+                "{{closeJobId}}",
                 "close"
               ]
             },
@@ -1654,7 +1930,7 @@
               "originalRequest": {
                 "method": "PATCH",
                 "header": [],
-                "url": "{{baseUrl}}/api/jobs/{{jobId}}/close",
+                "url": "{{baseUrl}}/api/jobs/{{closeJobId}}/close",
                 "auth": {
                   "type": "bearer",
                   "bearer": [
@@ -1674,7 +1950,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Job closed\",\n  \"job\": {\n    \"_id\": \"6adba103b3050371dd0ece11\",\n    \"title\": \"Backend Developer\",\n    \"description\": \"Build and maintain Node.js services for our booking platform and internal tools.\",\n    \"companyName\": \"Himalayan Tech\",\n    \"location\": \"Kathmandu\",\n    \"type\": \"full-time\",\n    \"salary\": 95000,\n    \"skills\": [\n      \"Node.js\",\n      \"Express\",\n      \"MongoDB\",\n      \"REST APIs\",\n      \"AWS\"\n    ],\n    \"status\": \"closed\",\n    \"postedBy\": \"6adba0ffb3050371dd0ece0e\",\n    \"createdAt\": \"2026-10-23T18:01:39.427Z\",\n    \"updatedAt\": \"2026-10-23T18:01:44.237Z\",\n    \"__v\": 1\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"Job closed\",\n  \"job\": {\n    \"_id\": \"6adbade2c6d7469aa41c9dcc\",\n    \"title\": \"Marketing Associate\",\n    \"description\": \"Plan campaigns and write content for our product launches.\",\n    \"companyName\": \"Himalayan Tech\",\n    \"location\": \"Kathmandu\",\n    \"type\": \"full-time\",\n    \"salary\": 45000,\n    \"skills\": [\n      \"SEO\",\n      \"Content\"\n    ],\n    \"status\": \"closed\",\n    \"postedBy\": \"6adbadddc6d7469aa41c9dc6\",\n    \"createdAt\": \"2026-10-23T18:56:34.322Z\",\n    \"updatedAt\": \"2026-10-23T18:56:34.533Z\",\n    \"__v\": 0\n  }\n}",
               "_postman_previewlanguage": "json"
             },
             {
@@ -1682,7 +1958,7 @@
               "originalRequest": {
                 "method": "PATCH",
                 "header": [],
-                "url": "{{baseUrl}}/api/jobs/{{jobId}}/close",
+                "url": "{{baseUrl}}/api/jobs/{{closeJobId}}/close",
                 "auth": {
                   "type": "bearer",
                   "bearer": [
@@ -1762,7 +2038,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Job statistics fetched\",\n  \"jobId\": \"6adba103b3050371dd0ece11\",\n  \"total\": 2,\n  \"stats\": {\n    \"applied\": 1,\n    \"shortlisted\": 1,\n    \"rejected\": 0,\n    \"hired\": 0\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"Job statistics fetched\",\n  \"jobId\": \"6adbade1c6d7469aa41c9dc9\",\n  \"total\": 2,\n  \"stats\": {\n    \"applied\": 1,\n    \"shortlisted\": 1,\n    \"rejected\": 0,\n    \"hired\": 0\n  }\n}",
               "_postman_previewlanguage": "json"
             },
             {
@@ -1801,14 +2077,14 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/jobs/{{jobId}}",
+              "raw": "{{baseUrl}}/api/jobs/{{deleteJobId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
                 "jobs",
-                "{{jobId}}"
+                "{{deleteJobId}}"
               ]
             },
             "description": "Job owner only. Deletes the job and all applications for it. Another employer gets 403; a missing job returns 404.",
@@ -1829,7 +2105,7 @@
               "originalRequest": {
                 "method": "DELETE",
                 "header": [],
-                "url": "{{baseUrl}}/api/jobs/{{jobId}}",
+                "url": "{{baseUrl}}/api/jobs/{{deleteJobId}}",
                 "auth": {
                   "type": "bearer",
                   "bearer": [
@@ -1857,7 +2133,7 @@
               "originalRequest": {
                 "method": "DELETE",
                 "header": [],
-                "url": "{{baseUrl}}/api/jobs/{{jobId}}",
+                "url": "{{baseUrl}}/api/jobs/{{deleteJobId}}",
                 "auth": {
                   "type": "bearer",
                   "bearer": [
@@ -1885,7 +2161,7 @@
               "originalRequest": {
                 "method": "DELETE",
                 "header": [],
-                "url": "{{baseUrl}}/api/jobs/{{jobId}}",
+                "url": "{{baseUrl}}/api/jobs/{{deleteJobId}}",
                 "auth": {
                   "type": "bearer",
                   "bearer": [
@@ -1999,7 +2275,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Application submitted\",\n  \"application\": {\n    \"job\": {\n      \"_id\": \"6adba103b3050371dd0ece11\",\n      \"title\": \"Backend Developer\",\n      \"companyName\": \"Himalayan Tech\",\n      \"location\": \"Kathmandu\",\n      \"type\": \"full-time\",\n      \"salary\": 95000,\n      \"status\": \"open\"\n    },\n    \"candidate\": \"6adba0feb3050371dd0ece0d\",\n    \"coverLetter\": \"I have four years of experience building Node.js APIs and would love to join the team.\",\n    \"status\": \"applied\",\n    \"_id\": \"6adba106b3050371dd0ece16\",\n    \"createdAt\": \"2026-10-23T18:01:42.007Z\",\n    \"updatedAt\": \"2026-10-23T18:01:42.007Z\",\n    \"__v\": 0\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"Application submitted\",\n  \"application\": {\n    \"job\": {\n      \"_id\": \"6adbade1c6d7469aa41c9dc9\",\n      \"title\": \"Backend Developer\",\n      \"companyName\": \"Himalayan Tech\",\n      \"location\": \"Kathmandu\",\n      \"type\": \"full-time\",\n      \"salary\": 95000,\n      \"status\": \"open\"\n    },\n    \"candidate\": \"6adbaddcc6d7469aa41c9dc5\",\n    \"coverLetter\": \"I have four years of experience building Node.js APIs and would love to join the team.\",\n    \"status\": \"applied\",\n    \"_id\": \"6adbade3c6d7469aa41c9dce\",\n    \"createdAt\": \"2026-10-23T18:56:35.811Z\",\n    \"updatedAt\": \"2026-10-23T18:56:35.811Z\",\n    \"__v\": 0\n  }\n}",
               "_postman_previewlanguage": "json"
             },
             {
@@ -2138,7 +2414,7 @@
                     "value": "application/json"
                   }
                 ],
-                "url": "{{baseUrl}}/api/jobs/6adba104b3050371dd0ece15/apply",
+                "url": "{{baseUrl}}/api/jobs/{{closeJobId}}/apply",
                 "body": {
                   "mode": "raw",
                   "raw": "{\n  \"coverLetter\": \"I have four years of experience building Node.js APIs and would love to join the team.\"\n}",
@@ -2270,7 +2546,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Application submitted\",\n  \"application\": {\n    \"job\": {\n      \"_id\": \"6adba103b3050371dd0ece11\",\n      \"title\": \"Backend Developer\",\n      \"companyName\": \"Himalayan Tech\",\n      \"location\": \"Kathmandu\",\n      \"type\": \"full-time\",\n      \"salary\": 95000,\n      \"status\": \"open\"\n    },\n    \"candidate\": \"6adba0ffb3050371dd0ece10\",\n    \"coverLetter\": \"I build small APIs in my spare time and I am looking for a backend role.\",\n    \"status\": \"applied\",\n    \"_id\": \"6adba106b3050371dd0ece17\",\n    \"createdAt\": \"2026-10-23T18:01:42.459Z\",\n    \"updatedAt\": \"2026-10-23T18:01:42.459Z\",\n    \"__v\": 0\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"Application submitted\",\n  \"application\": {\n    \"job\": {\n      \"_id\": \"6adbade1c6d7469aa41c9dc9\",\n      \"title\": \"Backend Developer\",\n      \"companyName\": \"Himalayan Tech\",\n      \"location\": \"Kathmandu\",\n      \"type\": \"full-time\",\n      \"salary\": 95000,\n      \"status\": \"open\"\n    },\n    \"candidate\": \"6adbadddc6d7469aa41c9dc8\",\n    \"coverLetter\": \"I build small APIs in my spare time and I am looking for a backend role.\",\n    \"status\": \"applied\",\n    \"_id\": \"6adbade4c6d7469aa41c9dcf\",\n    \"createdAt\": \"2026-10-23T18:56:36.404Z\",\n    \"updatedAt\": \"2026-10-23T18:56:36.404Z\",\n    \"__v\": 0\n  }\n}",
               "_postman_previewlanguage": "json"
             }
           ],
@@ -2373,7 +2649,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Application submitted\",\n  \"application\": {\n    \"job\": {\n      \"_id\": \"6adba103b3050371dd0ece12\",\n      \"title\": \"React Developer\",\n      \"companyName\": \"Himalayan Tech\",\n      \"location\": \"Kathmandu\",\n      \"type\": \"remote\",\n      \"salary\": 85000,\n      \"status\": \"open\"\n    },\n    \"candidate\": \"6adba0feb3050371dd0ece0d\",\n    \"coverLetter\": \"React and design systems are my main focus.\",\n    \"status\": \"applied\",\n    \"_id\": \"6adba106b3050371dd0ece18\",\n    \"createdAt\": \"2026-10-23T18:01:42.621Z\",\n    \"updatedAt\": \"2026-10-23T18:01:42.621Z\",\n    \"__v\": 0\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"Application submitted\",\n  \"application\": {\n    \"job\": {\n      \"_id\": \"6adbade1c6d7469aa41c9dca\",\n      \"title\": \"React Developer\",\n      \"companyName\": \"Himalayan Tech\",\n      \"location\": \"Kathmandu\",\n      \"type\": \"remote\",\n      \"salary\": 85000,\n      \"status\": \"open\"\n    },\n    \"candidate\": \"6adbaddcc6d7469aa41c9dc5\",\n    \"coverLetter\": \"React and design systems are my main focus.\",\n    \"status\": \"applied\",\n    \"_id\": \"6adbade4c6d7469aa41c9dd0\",\n    \"createdAt\": \"2026-10-23T18:56:36.676Z\",\n    \"updatedAt\": \"2026-10-23T18:56:36.676Z\",\n    \"__v\": 0\n  }\n}",
               "_postman_previewlanguage": "json"
             }
           ],
@@ -2447,7 +2723,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Applications fetched\",\n  \"count\": 2,\n  \"applications\": [\n    {\n      \"_id\": \"6adba106b3050371dd0ece18\",\n      \"job\": {\n        \"_id\": \"6adba103b3050371dd0ece12\",\n        \"title\": \"React Developer\",\n        \"companyName\": \"Himalayan Tech\",\n        \"location\": \"Kathmandu\",\n        \"type\": \"remote\",\n        \"salary\": 85000,\n        \"status\": \"open\"\n      },\n      \"candidate\": \"6adba0feb3050371dd0ece0d\",\n      \"coverLetter\": \"React and design systems are my main focus.\",\n      \"status\": \"applied\",\n      \"createdAt\": \"2026-10-23T18:01:42.621Z\",\n      \"updatedAt\": \"2026-10-23T18:01:42.621Z\",\n      \"__v\": 0\n    },\n    {\n      \"_id\": \"6adba106b3050371dd0ece16\",\n      \"job\": {\n        \"_id\": \"6adba103b3050371dd0ece11\",\n        \"title\": \"Backend Developer\",\n        \"companyName\": \"Himalayan Tech\",\n        \"location\": \"Kathmandu\",\n        \"type\": \"full-time\",\n        \"salary\": 95000,\n        \"status\": \"open\"\n      },\n      \"candidate\": \"6adba0feb3050371dd0ece0d\",\n      \"coverLetter\": \"I have four years of experience building Node.js APIs and would love to join the team.\",\n      \"status\": \"applied\",\n      \"createdAt\": \"2026-10-23T18:01:42.007Z\",\n      \"updatedAt\": \"2026-10-23T18:01:42.007Z\",\n      \"__v\": 0\n    }\n  ]\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"Applications fetched\",\n  \"count\": 2,\n  \"applications\": [\n    {\n      \"_id\": \"6adbade4c6d7469aa41c9dd0\",\n      \"job\": {\n        \"_id\": \"6adbade1c6d7469aa41c9dca\",\n        \"title\": \"React Developer\",\n        \"companyName\": \"Himalayan Tech\",\n        \"location\": \"Kathmandu\",\n        \"type\": \"remote\",\n        \"salary\": 85000,\n        \"status\": \"open\"\n      },\n      \"candidate\": \"6adbaddcc6d7469aa41c9dc5\",\n      \"coverLetter\": \"React and design systems are my main focus.\",\n      \"status\": \"applied\",\n      \"createdAt\": \"2026-10-23T18:56:36.676Z\",\n      \"updatedAt\": \"2026-10-23T18:56:36.676Z\",\n      \"__v\": 0\n    },\n    {\n      \"_id\": \"6adbade3c6d7469aa41c9dce\",\n      \"job\": {\n        \"_id\": \"6adbade1c6d7469aa41c9dc9\",\n        \"title\": \"Backend Developer\",\n        \"companyName\": \"Himalayan Tech\",\n        \"location\": \"Kathmandu\",\n        \"type\": \"full-time\",\n        \"salary\": 95000,\n        \"status\": \"open\"\n      },\n      \"candidate\": \"6adbaddcc6d7469aa41c9dc5\",\n      \"coverLetter\": \"I have four years of experience building Node.js APIs and would love to join the team.\",\n      \"status\": \"applied\",\n      \"createdAt\": \"2026-10-23T18:56:35.811Z\",\n      \"updatedAt\": \"2026-10-23T18:56:35.811Z\",\n      \"__v\": 0\n    }\n  ]\n}",
               "_postman_previewlanguage": "json"
             },
             {
@@ -2526,7 +2802,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Applications fetched\",\n  \"count\": 2,\n  \"applications\": [\n    {\n      \"_id\": \"6adba106b3050371dd0ece17\",\n      \"job\": \"6adba103b3050371dd0ece11\",\n      \"candidate\": {\n        \"_id\": \"6adba0ffb3050371dd0ece10\",\n        \"name\": \"Arjun Thapa\",\n        \"email\": \"arjun@example.com\"\n      },\n      \"coverLetter\": \"I build small APIs in my spare time and I am looking for a backend role.\",\n      \"status\": \"applied\",\n      \"createdAt\": \"2026-10-23T18:01:42.459Z\",\n      \"updatedAt\": \"2026-10-23T18:01:42.459Z\",\n      \"__v\": 0\n    },\n    {\n      \"_id\": \"6adba106b3050371dd0ece16\",\n      \"job\": \"6adba103b3050371dd0ece11\",\n      \"candidate\": {\n        \"_id\": \"6adba0feb3050371dd0ece0d\",\n        \"name\": \"Riya Gurung\",\n        \"email\": \"riya@example.com\"\n      },\n      \"coverLetter\": \"I have four years of experience building Node.js APIs and would love to join the team.\",\n      \"status\": \"applied\",\n      \"createdAt\": \"2026-10-23T18:01:42.007Z\",\n      \"updatedAt\": \"2026-10-23T18:01:42.007Z\",\n      \"__v\": 0\n    }\n  ]\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"Applications fetched\",\n  \"count\": 2,\n  \"applications\": [\n    {\n      \"_id\": \"6adbade4c6d7469aa41c9dcf\",\n      \"job\": \"6adbade1c6d7469aa41c9dc9\",\n      \"candidate\": {\n        \"_id\": \"6adbadddc6d7469aa41c9dc8\",\n        \"name\": \"Arjun Thapa\",\n        \"email\": \"arjun@example.com\"\n      },\n      \"coverLetter\": \"I build small APIs in my spare time and I am looking for a backend role.\",\n      \"status\": \"applied\",\n      \"createdAt\": \"2026-10-23T18:56:36.404Z\",\n      \"updatedAt\": \"2026-10-23T18:56:36.404Z\",\n      \"__v\": 0\n    },\n    {\n      \"_id\": \"6adbade3c6d7469aa41c9dce\",\n      \"job\": \"6adbade1c6d7469aa41c9dc9\",\n      \"candidate\": {\n        \"_id\": \"6adbaddcc6d7469aa41c9dc5\",\n        \"name\": \"Riya Gurung\",\n        \"email\": \"riya@example.com\"\n      },\n      \"coverLetter\": \"I have four years of experience building Node.js APIs and would love to join the team.\",\n      \"status\": \"applied\",\n      \"createdAt\": \"2026-10-23T18:56:35.811Z\",\n      \"updatedAt\": \"2026-10-23T18:56:35.811Z\",\n      \"__v\": 0\n    }\n  ]\n}",
               "_postman_previewlanguage": "json"
             },
             {
@@ -2582,7 +2858,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Applications fetched\",\n  \"count\": 1,\n  \"applications\": [\n    {\n      \"_id\": \"6adba106b3050371dd0ece17\",\n      \"job\": \"6adba103b3050371dd0ece11\",\n      \"candidate\": {\n        \"_id\": \"6adba0ffb3050371dd0ece10\",\n        \"name\": \"Arjun Thapa\",\n        \"email\": \"arjun@example.com\"\n      },\n      \"coverLetter\": \"I build small APIs in my spare time and I am looking for a backend role.\",\n      \"status\": \"applied\",\n      \"createdAt\": \"2026-10-23T18:01:42.459Z\",\n      \"updatedAt\": \"2026-10-23T18:01:42.459Z\",\n      \"__v\": 0\n    }\n  ]\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"Applications fetched\",\n  \"count\": 1,\n  \"applications\": [\n    {\n      \"_id\": \"6adbade3c6d7469aa41c9dce\",\n      \"job\": \"6adbade1c6d7469aa41c9dc9\",\n      \"candidate\": {\n        \"_id\": \"6adbaddcc6d7469aa41c9dc5\",\n        \"name\": \"Riya Gurung\",\n        \"email\": \"riya@example.com\"\n      },\n      \"coverLetter\": \"I have four years of experience building Node.js APIs and would love to join the team.\",\n      \"status\": \"applied\",\n      \"createdAt\": \"2026-10-23T18:56:35.811Z\",\n      \"updatedAt\": \"2026-10-23T18:56:35.811Z\",\n      \"__v\": 0\n    }\n  ]\n}",
               "_postman_previewlanguage": "json"
             }
           ]
@@ -2598,18 +2874,18 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/applications/{{applicationId}}/status",
+              "raw": "{{baseUrl}}/api/applications/{{applicationTwoId}}/status",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
                 "applications",
-                "{{applicationId}}",
+                "{{applicationTwoId}}",
                 "status"
               ]
             },
-            "description": "Job owner only. Allowed moves: applied -> shortlisted or rejected, shortlisted -> hired or rejected. Any other move returns 400. Body: status.",
+            "description": "Job owner only. Allowed moves: applied -> shortlisted or rejected, shortlisted -> hired or rejected. Any other move returns 400. Body: status. This request uses the second candidate application so {{applicationId}} stays applied for the withdrawal example.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"status\": \"shortlisted\"\n}",
@@ -2641,7 +2917,7 @@
                     "value": "application/json"
                   }
                 ],
-                "url": "{{baseUrl}}/api/applications/{{applicationId}}/status",
+                "url": "{{baseUrl}}/api/applications/{{applicationTwoId}}/status",
                 "body": {
                   "mode": "raw",
                   "raw": "{\n  \"status\": \"shortlisted\"\n}",
@@ -2670,7 +2946,7 @@
                   "value": "application/json; charset=utf-8"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Application status updated\",\n  \"application\": {\n    \"_id\": \"6adba106b3050371dd0ece16\",\n    \"job\": {\n      \"_id\": \"6adba103b3050371dd0ece11\",\n      \"title\": \"Backend Developer\",\n      \"companyName\": \"Himalayan Tech\",\n      \"postedBy\": \"6adba0ffb3050371dd0ece0e\"\n    },\n    \"candidate\": {\n      \"_id\": \"6adba0feb3050371dd0ece0d\",\n      \"name\": \"Riya Gurung\",\n      \"email\": \"riya@example.com\"\n    },\n    \"coverLetter\": \"I have four years of experience building Node.js APIs and would love to join the team.\",\n    \"status\": \"shortlisted\",\n    \"createdAt\": \"2026-10-23T18:01:42.007Z\",\n    \"updatedAt\": \"2026-10-23T18:01:43.106Z\",\n    \"__v\": 0\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"message\": \"Application status updated\",\n  \"application\": {\n    \"_id\": \"6adbade4c6d7469aa41c9dcf\",\n    \"job\": {\n      \"_id\": \"6adbade1c6d7469aa41c9dc9\",\n      \"title\": \"Backend Developer\",\n      \"companyName\": \"Himalayan Tech\",\n      \"postedBy\": \"6adbadddc6d7469aa41c9dc6\"\n    },\n    \"candidate\": {\n      \"_id\": \"6adbadddc6d7469aa41c9dc8\",\n      \"name\": \"Arjun Thapa\",\n      \"email\": \"arjun@example.com\"\n    },\n    \"coverLetter\": \"I build small APIs in my spare time and I am looking for a backend role.\",\n    \"status\": \"shortlisted\",\n    \"createdAt\": \"2026-10-23T18:56:36.404Z\",\n    \"updatedAt\": \"2026-10-23T18:56:37.246Z\",\n    \"__v\": 0\n  }\n}",
               "_postman_previewlanguage": "json"
             },
             {
@@ -2683,7 +2959,7 @@
                     "value": "application/json"
                   }
                 ],
-                "url": "{{baseUrl}}/api/applications/{{applicationTwoId}}/status",
+                "url": "{{baseUrl}}/api/applications/{{applicationId}}/status",
                 "body": {
                   "mode": "raw",
                   "raw": "{\n  \"status\": \"hired\"\n}",
@@ -2725,7 +3001,7 @@
                     "value": "application/json"
                   }
                 ],
-                "url": "{{baseUrl}}/api/applications/{{applicationId}}/status",
+                "url": "{{baseUrl}}/api/applications/{{applicationTwoId}}/status",
                 "body": {
                   "mode": "raw",
                   "raw": "{\n  \"status\": \"rejected\"\n}",
@@ -2835,7 +3111,7 @@
               "originalRequest": {
                 "method": "DELETE",
                 "header": [],
-                "url": "{{baseUrl}}/api/applications/6adba106b3050371dd0ece18",
+                "url": "{{baseUrl}}/api/applications/{{applicationId}}",
                 "auth": {
                   "type": "bearer",
                   "bearer": [
@@ -2863,7 +3139,7 @@
               "originalRequest": {
                 "method": "DELETE",
                 "header": [],
-                "url": "{{baseUrl}}/api/applications/{{applicationId}}",
+                "url": "{{baseUrl}}/api/applications/{{secondApplicationId}}",
                 "auth": {
                   "type": "bearer",
                   "bearer": [
