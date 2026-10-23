@@ -1,0 +1,2956 @@
+{
+  "info": {
+    "_postman_id": "b6f4a0d8-5c1e-4a4e-9f6d-2a7c3e8b1d94",
+    "name": "Job Portal API",
+    "description": "REST API for a job portal. Employers post jobs and review applications; candidates search jobs and apply. All paths use {{baseUrl}} and protected routes take a Bearer token.\n\nTest accounts (password secret123): aarav@example.com and nisha@example.com are employers, riya@example.com and arjun@example.com are candidates. The login requests fill the token variables automatically. Create Job saves {{jobId}} and Apply to a Job saves {{applicationId}}.\n\nThe saved examples were captured from the running API, including the failure cases.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Public registration and login, plus the profile route. The login requests save the returned JWT into the environment.",
+      "item": [
+        {
+          "name": "Register Candidate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Public. Creates a candidate account. Body: name, email, password (at least 6 characters), role. Returns 201 with a JWT and the user. The password is never returned.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Riya Gurung\",\n  \"email\": \"riya@example.com\",\n  \"password\": \"secret123\",\n  \"role\": \"candidate\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Register Candidate - 201 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/auth/register",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Riya Gurung\",\n  \"email\": \"riya@example.com\",\n  \"password\": \"secret123\",\n  \"role\": \"candidate\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"User registered successfully\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhMGZlYjMwNTAzNzFkZDBlY2UwZCIsImlhdCI6MTc5Mjc3ODQ5NSwiZXhwIjoxNzkzMzgzMjk1fQ.SCjdKhxuQhnATk871pZvZcBOiDbrw_IsVZB-R-6_kZA\",\n  \"user\": {\n    \"id\": \"6adba0feb3050371dd0ece0d\",\n    \"name\": \"Riya Gurung\",\n    \"email\": \"riya@example.com\",\n    \"role\": \"candidate\",\n    \"createdAt\": \"2026-10-23T18:01:34.858Z\",\n    \"updatedAt\": \"2026-10-23T18:01:34.858Z\"\n  }\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Register Candidate - 400 Invalid Data",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/auth/register",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Riya Gurung\",\n  \"email\": \"riya@\",\n  \"password\": \"123\",\n  \"role\": \"candidate\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Please provide a valid email address\"\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Register Candidate - 409 Duplicate Email",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/auth/register",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Riya Gurung\",\n  \"email\": \"riya@example.com\",\n  \"password\": \"secret123\",\n  \"role\": \"candidate\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Email is already registered\"\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ]
+        },
+        {
+          "name": "Register Employer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Public. Creates an employer account. Body: name, email, password, role=employer, companyName. Company name is required for employers. Returns 201 with a JWT.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Aarav Shrestha\",\n  \"email\": \"aarav@example.com\",\n  \"password\": \"secret123\",\n  \"role\": \"employer\",\n  \"companyName\": \"Himalayan Tech\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Register Employer - 201 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/auth/register",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Aarav Shrestha\",\n  \"email\": \"aarav@example.com\",\n  \"password\": \"secret123\",\n  \"role\": \"employer\",\n  \"companyName\": \"Himalayan Tech\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"User registered successfully\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhMGZmYjMwNTAzNzFkZDBlY2UwZSIsImlhdCI6MTc5Mjc3ODQ5NSwiZXhwIjoxNzkzMzgzMjk1fQ.i2he859--bQmz-zvmsQ6loL8zuuMAoZCRvhuvX_LHoI\",\n  \"user\": {\n    \"id\": \"6adba0ffb3050371dd0ece0e\",\n    \"name\": \"Aarav Shrestha\",\n    \"email\": \"aarav@example.com\",\n    \"role\": \"employer\",\n    \"createdAt\": \"2026-10-23T18:01:35.312Z\",\n    \"updatedAt\": \"2026-10-23T18:01:35.312Z\",\n    \"companyName\": \"Himalayan Tech\"\n  }\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Register Employer - 400 Missing Company",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/auth/register",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Suman Rai\",\n  \"email\": \"suman@example.com\",\n  \"password\": \"secret123\",\n  \"role\": \"employer\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Company name is required for employers\"\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ]
+        },
+        {
+          "name": "Register Employer 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Public. A second employer, used for the ownership checks. Same body fields as Register Employer.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nisha Karki\",\n  \"email\": \"nisha@example.com\",\n  \"password\": \"secret123\",\n  \"role\": \"employer\",\n  \"companyName\": \"Everest Labs\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Register Employer 2 - 201 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/auth/register",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Nisha Karki\",\n  \"email\": \"nisha@example.com\",\n  \"password\": \"secret123\",\n  \"role\": \"employer\",\n  \"companyName\": \"Everest Labs\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"User registered successfully\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhMGZmYjMwNTAzNzFkZDBlY2UwZiIsImlhdCI6MTc5Mjc3ODQ5NSwiZXhwIjoxNzkzMzgzMjk1fQ.kOkNp-IL8M7jYiPEnBqznYao4zks2Tijnfxwwv4AXi8\",\n  \"user\": {\n    \"id\": \"6adba0ffb3050371dd0ece0f\",\n    \"name\": \"Nisha Karki\",\n    \"email\": \"nisha@example.com\",\n    \"role\": \"employer\",\n    \"createdAt\": \"2026-10-23T18:01:35.625Z\",\n    \"updatedAt\": \"2026-10-23T18:01:35.625Z\",\n    \"companyName\": \"Everest Labs\"\n  }\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ]
+        },
+        {
+          "name": "Register Candidate 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Public. A second candidate, used for duplicate applications and the ownership checks.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Arjun Thapa\",\n  \"email\": \"arjun@example.com\",\n  \"password\": \"secret123\",\n  \"role\": \"candidate\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Register Candidate 2 - 201 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/auth/register",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Arjun Thapa\",\n  \"email\": \"arjun@example.com\",\n  \"password\": \"secret123\",\n  \"role\": \"candidate\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"User registered successfully\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhMGZmYjMwNTAzNzFkZDBlY2UxMCIsImlhdCI6MTc5Mjc3ODQ5NiwiZXhwIjoxNzkzMzgzMjk2fQ.0xGYTUQcycDqs2PaIJOua7U6W6uIFyRxS2mHKF528OA\",\n  \"user\": {\n    \"id\": \"6adba0ffb3050371dd0ece10\",\n    \"name\": \"Arjun Thapa\",\n    \"email\": \"arjun@example.com\",\n    \"role\": \"candidate\",\n    \"createdAt\": \"2026-10-23T18:01:35.961Z\",\n    \"updatedAt\": \"2026-10-23T18:01:35.961Z\"\n  }\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ]
+        },
+        {
+          "name": "Login Employer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Public. Logs in the first employer and saves the token to {{employerToken}}. Body: email and password. A wrong password returns 401.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"aarav@example.com\",\n  \"password\": \"secret123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Login Employer - 200 With Token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/auth/login",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"aarav@example.com\",\n  \"password\": \"secret123\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhMGZmYjMwNTAzNzFkZDBlY2UwZSIsImlhdCI6MTc5Mjc3ODQ5NywiZXhwIjoxNzkzMzgzMjk3fQ.oXpsu39cQecKkF73ww0X85CM32agApWMscPPEObBeEg\",\n  \"user\": {\n    \"id\": \"6adba0ffb3050371dd0ece0e\",\n    \"name\": \"Aarav Shrestha\",\n    \"email\": \"aarav@example.com\",\n    \"role\": \"employer\",\n    \"createdAt\": \"2026-10-23T18:01:35.312Z\",\n    \"updatedAt\": \"2026-10-23T18:01:35.312Z\",\n    \"companyName\": \"Himalayan Tech\"\n  }\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Login Employer - 401 Wrong Password",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/auth/login",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"aarav@example.com\",\n  \"password\": \"wrongpass\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Invalid email or password\"\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "  pm.environment.set('employerToken', body.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login Candidate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Public. Logs in the first candidate and saves the token to {{candidateToken}}. A wrong password returns 401.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"riya@example.com\",\n  \"password\": \"secret123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Login Candidate - 200 With Token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/auth/login",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"riya@example.com\",\n  \"password\": \"secret123\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhMGZlYjMwNTAzNzFkZDBlY2UwZCIsImlhdCI6MTc5Mjc3ODQ5OCwiZXhwIjoxNzkzMzgzMjk4fQ.7hkCyF1jsKjPWY9smhA3qGRW3VzlnhlBbMcf2Ozmwlw\",\n  \"user\": {\n    \"id\": \"6adba0feb3050371dd0ece0d\",\n    \"name\": \"Riya Gurung\",\n    \"email\": \"riya@example.com\",\n    \"role\": \"candidate\",\n    \"createdAt\": \"2026-10-23T18:01:34.858Z\",\n    \"updatedAt\": \"2026-10-23T18:01:34.858Z\"\n  }\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Login Candidate - 401 Wrong Password",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/auth/login",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"riya@example.com\",\n  \"password\": \"wrongpass\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Invalid email or password\"\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "  pm.environment.set('candidateToken', body.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login Employer 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Public. Logs in the second employer and saves the token to {{employerTwoToken}}.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nisha@example.com\",\n  \"password\": \"secret123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Login Employer 2 - 200 With Token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/auth/login",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"nisha@example.com\",\n  \"password\": \"secret123\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhMGZmYjMwNTAzNzFkZDBlY2UwZiIsImlhdCI6MTc5Mjc3ODQ5OCwiZXhwIjoxNzkzMzgzMjk4fQ.w5QwBdrcHk4uNkcWM__VY562xtBnQbmUgulyjMULD8k\",\n  \"user\": {\n    \"id\": \"6adba0ffb3050371dd0ece0f\",\n    \"name\": \"Nisha Karki\",\n    \"email\": \"nisha@example.com\",\n    \"role\": \"employer\",\n    \"createdAt\": \"2026-10-23T18:01:35.625Z\",\n    \"updatedAt\": \"2026-10-23T18:01:35.625Z\",\n    \"companyName\": \"Everest Labs\"\n  }\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "  pm.environment.set('employerTwoToken', body.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login Candidate 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Public. Logs in the second candidate and saves the token to {{candidateTwoToken}}.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"arjun@example.com\",\n  \"password\": \"secret123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Login Candidate 2 - 200 With Token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/auth/login",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"arjun@example.com\",\n  \"password\": \"secret123\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZGJhMGZmYjMwNTAzNzFkZDBlY2UxMCIsImlhdCI6MTc5Mjc3ODQ5OSwiZXhwIjoxNzkzMzgzMjk5fQ.n_dNTGQByqbLlek_ngxhGnUZlA-7vhu1_3ImKwYUSs0\",\n  \"user\": {\n    \"id\": \"6adba0ffb3050371dd0ece10\",\n    \"name\": \"Arjun Thapa\",\n    \"email\": \"arjun@example.com\",\n    \"role\": \"candidate\",\n    \"createdAt\": \"2026-10-23T18:01:35.961Z\",\n    \"updatedAt\": \"2026-10-23T18:01:35.961Z\"\n  }\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "  pm.environment.set('candidateTwoToken', body.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Logged in. Returns the profile of the token owner. Password and password hash are not included. Send Authorization: Bearer {{candidateToken}}.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Get My Profile - 200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/auth/me",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{candidateToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Profile fetched\",\n  \"user\": {\n    \"id\": \"6adba0feb3050371dd0ece0d\",\n    \"name\": \"Riya Gurung\",\n    \"email\": \"riya@example.com\",\n    \"role\": \"candidate\",\n    \"createdAt\": \"2026-10-23T18:01:34.858Z\",\n    \"updatedAt\": \"2026-10-23T18:01:34.858Z\"\n  }\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Get My Profile - 401 No Token",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/auth/me"
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Authentication required. Please provide a token\"\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Jobs",
+      "description": "Employers create and manage jobs. The public list supports search, filters, sorting and pagination.",
+      "item": [
+        {
+          "name": "Create Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs"
+              ]
+            },
+            "description": "Employer only. Body: title, description, companyName (optional, defaults to the employer company), location, type, salary and skills. Type must be full-time, part-time, internship or remote. Saves the new job id to {{jobId}}.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Backend Developer\",\n  \"description\": \"Build and maintain Node.js services for our booking platform and internal tools.\",\n  \"companyName\": \"Himalayan Tech\",\n  \"location\": \"Kathmandu\",\n  \"type\": \"full-time\",\n  \"salary\": 90000,\n  \"skills\": [\n    \"Node.js\",\n    \"Express\",\n    \"MongoDB\",\n    \"REST APIs\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employerToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Create Job - 201 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/jobs",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Backend Developer\",\n  \"description\": \"Build and maintain Node.js services for our booking platform and internal tools.\",\n  \"companyName\": \"Himalayan Tech\",\n  \"location\": \"Kathmandu\",\n  \"type\": \"full-time\",\n  \"salary\": 90000,\n  \"skills\": [\n    \"Node.js\",\n    \"Express\",\n    \"MongoDB\",\n    \"REST APIs\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Job created\",\n  \"job\": {\n    \"title\": \"Backend Developer\",\n    \"description\": \"Build and maintain Node.js services for our booking platform and internal tools.\",\n    \"companyName\": \"Himalayan Tech\",\n    \"location\": \"Kathmandu\",\n    \"type\": \"full-time\",\n    \"salary\": 90000,\n    \"skills\": [\n      \"Node.js\",\n      \"Express\",\n      \"MongoDB\",\n      \"REST APIs\"\n    ],\n    \"status\": \"open\",\n    \"postedBy\": \"6adba0ffb3050371dd0ece0e\",\n    \"_id\": \"6adba103b3050371dd0ece11\",\n    \"createdAt\": \"2026-10-23T18:01:39.427Z\",\n    \"updatedAt\": \"2026-10-23T18:01:39.427Z\",\n    \"__v\": 0\n  }\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Create Job - 400 Invalid Data",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/jobs",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Backend Developer\",\n  \"description\": \"Build and maintain our services.\",\n  \"companyName\": \"Himalayan Tech\",\n  \"location\": \"Kathmandu\",\n  \"type\": \"contract\",\n  \"salary\": -5000,\n  \"skills\": [\n    \"Node.js\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Job type must be full-time, part-time, internship or remote\"\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Create Job - 401 No Token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/jobs",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Backend Developer\",\n  \"description\": \"Build and maintain Node.js services for our booking platform and internal tools.\",\n  \"companyName\": \"Himalayan Tech\",\n  \"location\": \"Kathmandu\",\n  \"type\": \"full-time\",\n  \"salary\": 90000,\n  \"skills\": [\n    \"Node.js\",\n    \"Express\",\n    \"MongoDB\",\n    \"REST APIs\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Authentication required. Please provide a token\"\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Create Job - 403 Candidate Tries",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/jobs",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Backend Developer\",\n  \"description\": \"Build and maintain Node.js services for our booking platform and internal tools.\",\n  \"companyName\": \"Himalayan Tech\",\n  \"location\": \"Kathmandu\",\n  \"type\": \"full-time\",\n  \"salary\": 90000,\n  \"skills\": [\n    \"Node.js\",\n    \"Express\",\n    \"MongoDB\",\n    \"REST APIs\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{candidateToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Only employers can perform this action\"\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "",
+                  "if (pm.response.code === 201) {",
+                  "  pm.environment.set('jobId', body.job._id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Job (React)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs"
+              ]
+            },
+            "description": "Employer only. A second job for the search and filter examples. companyName is omitted here so the employer company is used.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"React Developer\",\n  \"description\": \"Work on the customer-facing dashboard and the design system.\",\n  \"location\": \"Kathmandu\",\n  \"type\": \"remote\",\n  \"salary\": 85000,\n  \"skills\": [\n    \"React\",\n    \"JavaScript\",\n    \"CSS\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employerToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Create Job (React) - 201 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/jobs",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"React Developer\",\n  \"description\": \"Work on the customer-facing dashboard and the design system.\",\n  \"location\": \"Kathmandu\",\n  \"type\": \"remote\",\n  \"salary\": 85000,\n  \"skills\": [\n    \"React\",\n    \"JavaScript\",\n    \"CSS\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Job created\",\n  \"job\": {\n    \"title\": \"React Developer\",\n    \"description\": \"Work on the customer-facing dashboard and the design system.\",\n    \"companyName\": \"Himalayan Tech\",\n    \"location\": \"Kathmandu\",\n    \"type\": \"remote\",\n    \"salary\": 85000,\n    \"skills\": [\n      \"React\",\n      \"JavaScript\",\n      \"CSS\"\n    ],\n    \"status\": \"open\",\n    \"postedBy\": \"6adba0ffb3050371dd0ece0e\",\n    \"_id\": \"6adba103b3050371dd0ece12\",\n    \"createdAt\": \"2026-10-23T18:01:39.710Z\",\n    \"updatedAt\": \"2026-10-23T18:01:39.710Z\",\n    \"__v\": 0\n  }\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "",
+                  "if (pm.response.code === 201) {",
+                  "  pm.environment.set('secondJobId', body.job._id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Job (Data Analyst)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs"
+              ]
+            },
+            "description": "Second employer. Used to check that an employer cannot update, close or see applications for a job owned by someone else.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Data Analyst Intern\",\n  \"description\": \"Help the analytics team prepare weekly reports and clean incoming data.\",\n  \"companyName\": \"Everest Labs\",\n  \"location\": \"Pokhara\",\n  \"type\": \"internship\",\n  \"salary\": 25000,\n  \"skills\": [\n    \"SQL\",\n    \"Excel\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employerTwoToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Create Job (Data Analyst) - 201 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/jobs",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Data Analyst Intern\",\n  \"description\": \"Help the analytics team prepare weekly reports and clean incoming data.\",\n  \"companyName\": \"Everest Labs\",\n  \"location\": \"Pokhara\",\n  \"type\": \"internship\",\n  \"salary\": 25000,\n  \"skills\": [\n    \"SQL\",\n    \"Excel\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerTwoToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Job created\",\n  \"job\": {\n    \"title\": \"Data Analyst Intern\",\n    \"description\": \"Help the analytics team prepare weekly reports and clean incoming data.\",\n    \"companyName\": \"Everest Labs\",\n    \"location\": \"Pokhara\",\n    \"type\": \"internship\",\n    \"salary\": 25000,\n    \"skills\": [\n      \"SQL\",\n      \"Excel\"\n    ],\n    \"status\": \"open\",\n    \"postedBy\": \"6adba0ffb3050371dd0ece0f\",\n    \"_id\": \"6adba103b3050371dd0ece13\",\n    \"createdAt\": \"2026-10-23T18:01:39.918Z\",\n    \"updatedAt\": \"2026-10-23T18:01:39.918Z\",\n    \"__v\": 0\n  }\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ]
+        },
+        {
+          "name": "Get All Jobs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs?page=1&limit=2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "2"
+                }
+              ]
+            },
+            "description": "Public. Query options: search (title or company), location, type, skill, minSalary, sort (salary, -salary, title, -title, createdAt, -createdAt), page and limit. Returns { success, total, page, pages, count, data }."
+          },
+          "response": [
+            {
+              "name": "Get All Jobs - 200 First Page",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/jobs?page=1&limit=2"
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"total\": 5,\n  \"page\": 1,\n  \"pages\": 3,\n  \"count\": 2,\n  \"data\": [\n    {\n      \"_id\": \"6adba104b3050371dd0ece15\",\n      \"title\": \"Marketing Associate\",\n      \"description\": \"Plan campaigns and write content for our product launches.\",\n      \"companyName\": \"Himalayan Tech\",\n      \"location\": \"Kathmandu\",\n      \"type\": \"full-time\",\n      \"salary\": 45000,\n      \"skills\": [\n        \"SEO\",\n        \"Content\"\n      ],\n      \"status\": \"closed\",\n      \"postedBy\": {\n        \"_id\": \"6adba0ffb3050371dd0ece0e\",\n        \"name\": \"Aarav Shrestha\",\n        \"companyName\": \"Himalayan Tech\"\n      },\n      \"createdAt\": \"2026-10-23T18:01:40.321Z\",\n      \"updatedAt\": \"2026-10-23T18:01:40.516Z\",\n      \"__v\": 0\n    },\n    {\n      \"_id\": \"6adba104b3050371dd0ece14\",\n      \"title\": \"Support Engineer\",\n      \"description\": \"Help customers with setup, billing and technical questions.\",\n      \"companyName\": \"Everest Labs\",\n      \"location\": \"Lalitpur\",\n      \"type\": \"part-time\",\n      \"salary\": 40000,\n      \"skills\": [\n        \"Linux\",\n        \"Communication\"\n      ],\n      \"status\": \"open\",\n      \"postedBy\": {\n        \"_id\": \"6adba0ffb3050371dd0ece0f\",\n        \"name\": \"Nisha Karki\",\n        \"companyName\": \"Everest Labs\"\n      },\n      \"createdAt\": \"2026-10-23T18:01:40.080Z\",\n      \"updatedAt\": \"2026-10-23T18:01:40.080Z\",\n      \"__v\": 0\n    }\n  ]\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Get All Jobs - 200 With Filters And Sort",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/jobs?search=react&location=kathmandu&type=remote&skill=javascript&minSalary=50000&sort=-salary"
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"total\": 1,\n  \"page\": 1,\n  \"pages\": 1,\n  \"count\": 1,\n  \"data\": [\n    {\n      \"_id\": \"6adba103b3050371dd0ece12\",\n      \"title\": \"React Developer\",\n      \"description\": \"Work on the customer-facing dashboard and the design system.\",\n      \"companyName\": \"Himalayan Tech\",\n      \"location\": \"Kathmandu\",\n      \"type\": \"remote\",\n      \"salary\": 85000,\n      \"skills\": [\n        \"React\",\n        \"JavaScript\",\n        \"CSS\"\n      ],\n      \"status\": \"open\",\n      \"postedBy\": {\n        \"_id\": \"6adba0ffb3050371dd0ece0e\",\n        \"name\": \"Aarav Shrestha\",\n        \"companyName\": \"Himalayan Tech\"\n      },\n      \"createdAt\": \"2026-10-23T18:01:39.710Z\",\n      \"updatedAt\": \"2026-10-23T18:01:39.710Z\",\n      \"__v\": 0\n    }\n  ]\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Get All Jobs - 200 Sorted By Salary",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/jobs?sort=salary&limit=3"
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"total\": 5,\n  \"page\": 1,\n  \"pages\": 2,\n  \"count\": 3,\n  \"data\": [\n    {\n      \"_id\": \"6adba103b3050371dd0ece13\",\n      \"title\": \"Data Analyst Intern\",\n      \"description\": \"Help the analytics team prepare weekly reports and clean incoming data.\",\n      \"companyName\": \"Everest Labs\",\n      \"location\": \"Pokhara\",\n      \"type\": \"internship\",\n      \"salary\": 25000,\n      \"skills\": [\n        \"SQL\",\n        \"Excel\"\n      ],\n      \"status\": \"open\",\n      \"postedBy\": {\n        \"_id\": \"6adba0ffb3050371dd0ece0f\",\n        \"name\": \"Nisha Karki\",\n        \"companyName\": \"Everest Labs\"\n      },\n      \"createdAt\": \"2026-10-23T18:01:39.918Z\",\n      \"updatedAt\": \"2026-10-23T18:01:39.918Z\",\n      \"__v\": 0\n    },\n    {\n      \"_id\": \"6adba104b3050371dd0ece14\",\n      \"title\": \"Support Engineer\",\n      \"description\": \"Help customers with setup, billing and technical questions.\",\n      \"companyName\": \"Everest Labs\",\n      \"location\": \"Lalitpur\",\n      \"type\": \"part-time\",\n      \"salary\": 40000,\n      \"skills\": [\n        \"Linux\",\n        \"Communication\"\n      ],\n      \"status\": \"open\",\n      \"postedBy\": {\n        \"_id\": \"6adba0ffb3050371dd0ece0f\",\n        \"name\": \"Nisha Karki\",\n        \"companyName\": \"Everest Labs\"\n      },\n      \"createdAt\": \"2026-10-23T18:01:40.080Z\",\n      \"updatedAt\": \"2026-10-23T18:01:40.080Z\",\n      \"__v\": 0\n    },\n    {\n      \"_id\": \"6adba104b3050371dd0ece15\",\n      \"title\": \"Marketing Associate\",\n      \"description\": \"Plan campaigns and write content for our product launches.\",\n      \"companyName\": \"Himalayan Tech\",\n      \"location\": \"Kathmandu\",\n      \"type\": \"full-time\",\n      \"salary\": 45000,\n      \"skills\": [\n        \"SEO\",\n        \"Content\"\n      ],\n      \"status\": \"closed\",\n      \"postedBy\": {\n        \"_id\": \"6adba0ffb3050371dd0ece0e\",\n        \"name\": \"Aarav Shrestha\",\n        \"companyName\": \"Himalayan Tech\"\n      },\n      \"createdAt\": \"2026-10-23T18:01:40.321Z\",\n      \"updatedAt\": \"2026-10-23T18:01:40.516Z\",\n      \"__v\": 0\n    }\n  ]\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Get All Jobs - 200 Empty Result",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/jobs?search=blockchain"
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"total\": 0,\n  \"page\": 1,\n  \"pages\": 0,\n  \"count\": 0,\n  \"data\": []\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Get All Jobs - 400 Invalid Page",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/jobs?page=-1"
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Page must be a positive integer\"\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ]
+        },
+        {
+          "name": "Get Single Job",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{jobId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "{{jobId}}"
+              ]
+            },
+            "description": "Public. Returns one job with the employer name and company. An invalid id returns 400 and a missing job returns 404."
+          },
+          "response": [
+            {
+              "name": "Get Single Job - 200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/jobs/{{jobId}}"
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Job fetched\",\n  \"job\": {\n    \"_id\": \"6adba103b3050371dd0ece11\",\n    \"title\": \"Backend Developer\",\n    \"description\": \"Build and maintain Node.js services for our booking platform and internal tools.\",\n    \"companyName\": \"Himalayan Tech\",\n    \"location\": \"Kathmandu\",\n    \"type\": \"full-time\",\n    \"salary\": 90000,\n    \"skills\": [\n      \"Node.js\",\n      \"Express\",\n      \"MongoDB\",\n      \"REST APIs\"\n    ],\n    \"status\": \"open\",\n    \"postedBy\": {\n      \"_id\": \"6adba0ffb3050371dd0ece0e\",\n      \"name\": \"Aarav Shrestha\",\n      \"companyName\": \"Himalayan Tech\"\n    },\n    \"createdAt\": \"2026-10-23T18:01:39.427Z\",\n    \"updatedAt\": \"2026-10-23T18:01:39.427Z\",\n    \"__v\": 0\n  }\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Get Single Job - 400 Invalid ID",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/jobs/12345"
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Invalid job id\"\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Get Single Job - 404 Not Found",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/jobs/64b7f9f9f9f9f9f9f9f9f9f9"
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Job not found\"\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ]
+        },
+        {
+          "name": "Update Job",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{jobId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "{{jobId}}"
+              ]
+            },
+            "description": "Job owner only. Accepts title, description, companyName, location, type, salary and skills. Another employer gets 403; the status is changed with the Close Job route instead.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"salary\": 95000,\n  \"skills\": [\n    \"Node.js\",\n    \"Express\",\n    \"MongoDB\",\n    \"REST APIs\",\n    \"AWS\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employerToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Update Job - 200 Success",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/jobs/{{jobId}}",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"salary\": 95000,\n  \"skills\": [\n    \"Node.js\",\n    \"Express\",\n    \"MongoDB\",\n    \"REST APIs\",\n    \"AWS\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Job updated\",\n  \"job\": {\n    \"_id\": \"6adba103b3050371dd0ece11\",\n    \"title\": \"Backend Developer\",\n    \"description\": \"Build and maintain Node.js services for our booking platform and internal tools.\",\n    \"companyName\": \"Himalayan Tech\",\n    \"location\": \"Kathmandu\",\n    \"type\": \"full-time\",\n    \"salary\": 95000,\n    \"skills\": [\n      \"Node.js\",\n      \"Express\",\n      \"MongoDB\",\n      \"REST APIs\",\n      \"AWS\"\n    ],\n    \"status\": \"open\",\n    \"postedBy\": \"6adba0ffb3050371dd0ece0e\",\n    \"createdAt\": \"2026-10-23T18:01:39.427Z\",\n    \"updatedAt\": \"2026-10-23T18:01:41.593Z\",\n    \"__v\": 1\n  }\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Update Job - 403 Another Employer",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/jobs/{{jobId}}",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"salary\": 95000,\n  \"skills\": [\n    \"Node.js\",\n    \"Express\",\n    \"MongoDB\",\n    \"REST APIs\",\n    \"AWS\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerTwoToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"You can only update your own jobs\"\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Update Job - 404 Not Found",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/jobs/64b7f9f9f9f9f9f9f9f9f9f9",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"salary\": 95000,\n  \"skills\": [\n    \"Node.js\",\n    \"Express\",\n    \"MongoDB\",\n    \"REST APIs\",\n    \"AWS\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Job not found\"\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ]
+        },
+        {
+          "name": "Close Job",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{jobId}}/close",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "{{jobId}}",
+                "close"
+              ]
+            },
+            "description": "Job owner only. Sets the job status to closed. Closed jobs cannot receive new applications.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employerToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Close Job - 200 Success",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [],
+                "url": "{{baseUrl}}/api/jobs/{{jobId}}/close",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Job closed\",\n  \"job\": {\n    \"_id\": \"6adba103b3050371dd0ece11\",\n    \"title\": \"Backend Developer\",\n    \"description\": \"Build and maintain Node.js services for our booking platform and internal tools.\",\n    \"companyName\": \"Himalayan Tech\",\n    \"location\": \"Kathmandu\",\n    \"type\": \"full-time\",\n    \"salary\": 95000,\n    \"skills\": [\n      \"Node.js\",\n      \"Express\",\n      \"MongoDB\",\n      \"REST APIs\",\n      \"AWS\"\n    ],\n    \"status\": \"closed\",\n    \"postedBy\": \"6adba0ffb3050371dd0ece0e\",\n    \"createdAt\": \"2026-10-23T18:01:39.427Z\",\n    \"updatedAt\": \"2026-10-23T18:01:44.237Z\",\n    \"__v\": 1\n  }\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Close Job - 403 Another Employer",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [],
+                "url": "{{baseUrl}}/api/jobs/{{jobId}}/close",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerTwoToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"You can only close your own jobs\"\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ]
+        },
+        {
+          "name": "Job Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{jobId}}/stats",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "{{jobId}}",
+                "stats"
+              ]
+            },
+            "description": "Job owner only. Returns the number of applications in each status. The API uses a MongoDB aggregation pipeline with $match and $group.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employerToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Job Statistics - 200 With Data",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/jobs/{{jobId}}/stats",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Job statistics fetched\",\n  \"jobId\": \"6adba103b3050371dd0ece11\",\n  \"total\": 2,\n  \"stats\": {\n    \"applied\": 1,\n    \"shortlisted\": 1,\n    \"rejected\": 0,\n    \"hired\": 0\n  }\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Job Statistics - 403 Another Employer",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/jobs/{{jobId}}/stats",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerTwoToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"You can only view statistics for your own jobs\"\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ]
+        },
+        {
+          "name": "Delete Job",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{jobId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "{{jobId}}"
+              ]
+            },
+            "description": "Job owner only. Deletes the job and all applications for it. Another employer gets 403; a missing job returns 404.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employerToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Delete Job - 403 Another Employer",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": "{{baseUrl}}/api/jobs/{{jobId}}",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerTwoToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"You can only delete your own jobs\"\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Delete Job - 200 Success",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": "{{baseUrl}}/api/jobs/{{jobId}}",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Job and its applications deleted\"\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Delete Job - 404 Not Found",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": "{{baseUrl}}/api/jobs/{{jobId}}",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Job not found\"\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Applications",
+      "description": "Candidates apply and withdraw. Employers review applications and move them through the allowed statuses.",
+      "item": [
+        {
+          "name": "Apply to a Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{jobId}}/apply",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "{{jobId}}",
+                "apply"
+              ]
+            },
+            "description": "Candidate only. Body: coverLetter (optional, max 2000 characters). A candidate can apply once per job and cannot apply to a closed job. Saves the application id to {{applicationId}}.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coverLetter\": \"I have four years of experience building Node.js APIs and would love to join the team.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Apply to a Job - 201 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/jobs/{{jobId}}/apply",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"coverLetter\": \"I have four years of experience building Node.js APIs and would love to join the team.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{candidateToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Application submitted\",\n  \"application\": {\n    \"job\": {\n      \"_id\": \"6adba103b3050371dd0ece11\",\n      \"title\": \"Backend Developer\",\n      \"companyName\": \"Himalayan Tech\",\n      \"location\": \"Kathmandu\",\n      \"type\": \"full-time\",\n      \"salary\": 95000,\n      \"status\": \"open\"\n    },\n    \"candidate\": \"6adba0feb3050371dd0ece0d\",\n    \"coverLetter\": \"I have four years of experience building Node.js APIs and would love to join the team.\",\n    \"status\": \"applied\",\n    \"_id\": \"6adba106b3050371dd0ece16\",\n    \"createdAt\": \"2026-10-23T18:01:42.007Z\",\n    \"updatedAt\": \"2026-10-23T18:01:42.007Z\",\n    \"__v\": 0\n  }\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Apply to a Job - 409 Already Applied",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/jobs/{{jobId}}/apply",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"coverLetter\": \"I have four years of experience building Node.js APIs and would love to join the team.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{candidateToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"You have already applied to this job\"\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Apply to a Job - 403 Employer Tries",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/jobs/{{jobId}}/apply",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"coverLetter\": \"I have four years of experience building Node.js APIs and would love to join the team.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Only candidates can perform this action\"\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Apply to a Job - 404 Job Not Found",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/jobs/64b7f9f9f9f9f9f9f9f9f9f9/apply",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"coverLetter\": \"I have four years of experience building Node.js APIs and would love to join the team.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{candidateToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Job not found\"\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Apply to a Job - 409 Job Closed",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/jobs/6adba104b3050371dd0ece15/apply",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"coverLetter\": \"I have four years of experience building Node.js APIs and would love to join the team.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{candidateToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"This job is closed and no longer accepts applications\"\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "",
+                  "if (pm.response.code === 201) {",
+                  "  pm.environment.set('applicationId', body.application._id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Apply as Second Candidate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{jobId}}/apply",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "{{jobId}}",
+                "apply"
+              ]
+            },
+            "description": "Candidate only. Arjun applies to the same job so the employer has more than one application to review. Saves {{applicationTwoId}}.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coverLetter\": \"I build small APIs in my spare time and I am looking for a backend role.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateTwoToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Apply as Second Candidate - 201 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/jobs/{{jobId}}/apply",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"coverLetter\": \"I build small APIs in my spare time and I am looking for a backend role.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{candidateTwoToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Application submitted\",\n  \"application\": {\n    \"job\": {\n      \"_id\": \"6adba103b3050371dd0ece11\",\n      \"title\": \"Backend Developer\",\n      \"companyName\": \"Himalayan Tech\",\n      \"location\": \"Kathmandu\",\n      \"type\": \"full-time\",\n      \"salary\": 95000,\n      \"status\": \"open\"\n    },\n    \"candidate\": \"6adba0ffb3050371dd0ece10\",\n    \"coverLetter\": \"I build small APIs in my spare time and I am looking for a backend role.\",\n    \"status\": \"applied\",\n    \"_id\": \"6adba106b3050371dd0ece17\",\n    \"createdAt\": \"2026-10-23T18:01:42.459Z\",\n    \"updatedAt\": \"2026-10-23T18:01:42.459Z\",\n    \"__v\": 0\n  }\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "",
+                  "if (pm.response.code === 201) {",
+                  "  pm.environment.set('applicationTwoId', body.application._id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Apply to Second Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{secondJobId}}/apply",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "{{secondJobId}}",
+                "apply"
+              ]
+            },
+            "description": "Candidate only. Riya applies to the React job so there is an applied application that can be withdrawn. Saves {{secondApplicationId}}.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coverLetter\": \"React and design systems are my main focus.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Apply to Second Job - 201 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/jobs/{{secondJobId}}/apply",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"coverLetter\": \"React and design systems are my main focus.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{candidateToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Application submitted\",\n  \"application\": {\n    \"job\": {\n      \"_id\": \"6adba103b3050371dd0ece12\",\n      \"title\": \"React Developer\",\n      \"companyName\": \"Himalayan Tech\",\n      \"location\": \"Kathmandu\",\n      \"type\": \"remote\",\n      \"salary\": 85000,\n      \"status\": \"open\"\n    },\n    \"candidate\": \"6adba0feb3050371dd0ece0d\",\n    \"coverLetter\": \"React and design systems are my main focus.\",\n    \"status\": \"applied\",\n    \"_id\": \"6adba106b3050371dd0ece18\",\n    \"createdAt\": \"2026-10-23T18:01:42.621Z\",\n    \"updatedAt\": \"2026-10-23T18:01:42.621Z\",\n    \"__v\": 0\n  }\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "",
+                  "if (pm.response.code === 201) {",
+                  "  pm.environment.set('secondApplicationId', body.application._id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get My Applications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/applications/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "applications",
+                "my"
+              ]
+            },
+            "description": "Candidate only. Returns the logged-in candidate applications, newest first, with the job title, company, location, type, salary and status.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Get My Applications - 200 With Data",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/applications/my",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{candidateToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Applications fetched\",\n  \"count\": 2,\n  \"applications\": [\n    {\n      \"_id\": \"6adba106b3050371dd0ece18\",\n      \"job\": {\n        \"_id\": \"6adba103b3050371dd0ece12\",\n        \"title\": \"React Developer\",\n        \"companyName\": \"Himalayan Tech\",\n        \"location\": \"Kathmandu\",\n        \"type\": \"remote\",\n        \"salary\": 85000,\n        \"status\": \"open\"\n      },\n      \"candidate\": \"6adba0feb3050371dd0ece0d\",\n      \"coverLetter\": \"React and design systems are my main focus.\",\n      \"status\": \"applied\",\n      \"createdAt\": \"2026-10-23T18:01:42.621Z\",\n      \"updatedAt\": \"2026-10-23T18:01:42.621Z\",\n      \"__v\": 0\n    },\n    {\n      \"_id\": \"6adba106b3050371dd0ece16\",\n      \"job\": {\n        \"_id\": \"6adba103b3050371dd0ece11\",\n        \"title\": \"Backend Developer\",\n        \"companyName\": \"Himalayan Tech\",\n        \"location\": \"Kathmandu\",\n        \"type\": \"full-time\",\n        \"salary\": 95000,\n        \"status\": \"open\"\n      },\n      \"candidate\": \"6adba0feb3050371dd0ece0d\",\n      \"coverLetter\": \"I have four years of experience building Node.js APIs and would love to join the team.\",\n      \"status\": \"applied\",\n      \"createdAt\": \"2026-10-23T18:01:42.007Z\",\n      \"updatedAt\": \"2026-10-23T18:01:42.007Z\",\n      \"__v\": 0\n    }\n  ]\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Get My Applications - 401 No Token",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/applications/my"
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Authentication required. Please provide a token\"\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ]
+        },
+        {
+          "name": "Get Applications of a Job",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{jobId}}/applications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "{{jobId}}",
+                "applications"
+              ],
+              "query": []
+            },
+            "description": "Job owner only. Returns applications with the candidate name and email. Add ?status=applied, shortlisted, rejected or hired to filter.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employerToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Get Applications of a Job - 200 With Data",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/jobs/{{jobId}}/applications",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Applications fetched\",\n  \"count\": 2,\n  \"applications\": [\n    {\n      \"_id\": \"6adba106b3050371dd0ece17\",\n      \"job\": \"6adba103b3050371dd0ece11\",\n      \"candidate\": {\n        \"_id\": \"6adba0ffb3050371dd0ece10\",\n        \"name\": \"Arjun Thapa\",\n        \"email\": \"arjun@example.com\"\n      },\n      \"coverLetter\": \"I build small APIs in my spare time and I am looking for a backend role.\",\n      \"status\": \"applied\",\n      \"createdAt\": \"2026-10-23T18:01:42.459Z\",\n      \"updatedAt\": \"2026-10-23T18:01:42.459Z\",\n      \"__v\": 0\n    },\n    {\n      \"_id\": \"6adba106b3050371dd0ece16\",\n      \"job\": \"6adba103b3050371dd0ece11\",\n      \"candidate\": {\n        \"_id\": \"6adba0feb3050371dd0ece0d\",\n        \"name\": \"Riya Gurung\",\n        \"email\": \"riya@example.com\"\n      },\n      \"coverLetter\": \"I have four years of experience building Node.js APIs and would love to join the team.\",\n      \"status\": \"applied\",\n      \"createdAt\": \"2026-10-23T18:01:42.007Z\",\n      \"updatedAt\": \"2026-10-23T18:01:42.007Z\",\n      \"__v\": 0\n    }\n  ]\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Get Applications of a Job - 403 Another Employer",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/jobs/{{jobId}}/applications",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerTwoToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"You can only view applications for your own jobs\"\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Get Applications of a Job - 200 Filtered By Status",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/jobs/{{jobId}}/applications?status=applied",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Applications fetched\",\n  \"count\": 1,\n  \"applications\": [\n    {\n      \"_id\": \"6adba106b3050371dd0ece17\",\n      \"job\": \"6adba103b3050371dd0ece11\",\n      \"candidate\": {\n        \"_id\": \"6adba0ffb3050371dd0ece10\",\n        \"name\": \"Arjun Thapa\",\n        \"email\": \"arjun@example.com\"\n      },\n      \"coverLetter\": \"I build small APIs in my spare time and I am looking for a backend role.\",\n      \"status\": \"applied\",\n      \"createdAt\": \"2026-10-23T18:01:42.459Z\",\n      \"updatedAt\": \"2026-10-23T18:01:42.459Z\",\n      \"__v\": 0\n    }\n  ]\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ]
+        },
+        {
+          "name": "Update Application Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/applications/{{applicationId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "applications",
+                "{{applicationId}}",
+                "status"
+              ]
+            },
+            "description": "Job owner only. Allowed moves: applied -> shortlisted or rejected, shortlisted -> hired or rejected. Any other move returns 400. Body: status.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"shortlisted\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employerToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Update Application Status - 200 Success",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/applications/{{applicationId}}/status",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"shortlisted\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Application status updated\",\n  \"application\": {\n    \"_id\": \"6adba106b3050371dd0ece16\",\n    \"job\": {\n      \"_id\": \"6adba103b3050371dd0ece11\",\n      \"title\": \"Backend Developer\",\n      \"companyName\": \"Himalayan Tech\",\n      \"postedBy\": \"6adba0ffb3050371dd0ece0e\"\n    },\n    \"candidate\": {\n      \"_id\": \"6adba0feb3050371dd0ece0d\",\n      \"name\": \"Riya Gurung\",\n      \"email\": \"riya@example.com\"\n    },\n    \"coverLetter\": \"I have four years of experience building Node.js APIs and would love to join the team.\",\n    \"status\": \"shortlisted\",\n    \"createdAt\": \"2026-10-23T18:01:42.007Z\",\n    \"updatedAt\": \"2026-10-23T18:01:43.106Z\",\n    \"__v\": 0\n  }\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Update Application Status - 400 Invalid Transition",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/applications/{{applicationTwoId}}/status",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"hired\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"An application cannot move from applied to hired\"\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Update Application Status - 403 Another Employer",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/applications/{{applicationId}}/status",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"rejected\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerTwoToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"You can only update applications for your own jobs\"\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Update Application Status - 404 Not Found",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/applications/64b7f9f9f9f9f9f9f9f9f9f9/status",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"shortlisted\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{employerToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Application not found\"\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ]
+        },
+        {
+          "name": "Withdraw Application",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/applications/{{applicationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "applications",
+                "{{applicationId}}"
+              ]
+            },
+            "description": "Applicant only. Withdraws an application while its status is applied. A shortlisted, rejected or hired application returns 400. Another candidate gets 403.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Withdraw Application - 200 Success",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": "{{baseUrl}}/api/applications/6adba106b3050371dd0ece18",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{candidateToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Application withdrawn\"\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Withdraw Application - 400 Not In Applied Status",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": "{{baseUrl}}/api/applications/{{applicationId}}",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{candidateToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"You can only withdraw an application while it is in the applied stage\"\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Withdraw Application - 403 Someone Else Application",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": "{{baseUrl}}/api/applications/{{applicationTwoId}}",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{candidateToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"You can only withdraw your own application\"\n}",
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "name": "Withdraw Application - 404 Not Found",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": "{{baseUrl}}/api/applications/64b7f9f9f9f9f9f9f9f9f9f9",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{candidateToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Application not found\"\n}",
+              "_postman_previewlanguage": "json"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ]
+}
