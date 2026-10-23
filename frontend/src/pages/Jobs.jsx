@@ -6,6 +6,7 @@ import { formatDate, formatSalary, JOB_TYPES } from '../utils';
 const EMPTY_FILTERS = {
   search: '',
   location: '',
+  skill: '',
   type: '',
   minSalary: '',
   sort: '-createdAt',
@@ -60,6 +61,7 @@ export default function Jobs() {
     const params = new URLSearchParams({ page: String(page), limit: '9' });
     if (filters.search) params.set('search', filters.search);
     if (filters.location) params.set('location', filters.location);
+    if (filters.skill) params.set('skill', filters.skill);
     if (filters.type) params.set('type', filters.type);
     if (filters.minSalary) params.set('minSalary', filters.minSalary);
     if (filters.sort) params.set('sort', filters.sort);
@@ -125,6 +127,15 @@ export default function Jobs() {
             placeholder="Kathmandu"
             value={form.location}
             onChange={(event) => setForm({ ...form, location: event.target.value })}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="skill">Skill</label>
+          <input
+            id="skill"
+            placeholder="React"
+            value={form.skill}
+            onChange={(event) => setForm({ ...form, skill: event.target.value })}
           />
         </div>
         <div className="field">

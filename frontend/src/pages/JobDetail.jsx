@@ -13,12 +13,15 @@ export default function JobDetail() {
 
   const [coverLetter, setCoverLetter] = useState('');
   const [applying, setApplying] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [message, setMessage] = useState('');
   const [applyError, setApplyError] = useState('');
 
   useEffect(() => {
     let ignore = false;
     setLoading(true);
+    setSubmitted(false);
+    setMessage('');
 
     api(`/api/jobs/${id}`)
       .then((data) => {
@@ -48,6 +51,7 @@ export default function JobDetail() {
         token: auth.token,
         body: { coverLetter },
       });
+      setSubmitted(true);
       setMessage('Application submitted. You can track it under My applications.');
       setCoverLetter('');
     } catch (err) {
@@ -62,7 +66,7 @@ export default function JobDetail() {
   if (!job) return null;
 
   const isOwner = auth?.user.role === 'employer' && job.postedBy._id === auth.user.id;
-  const canApply = auth?.user.role === 'candidate' && job.status === 'open';
+  const canApply = auth?.user.role === 'candidate' && job.status === 'open' && !submitted;
 
   return (
     <div className="stack">
@@ -107,6 +111,8 @@ export default function JobDetail() {
             <p className="alert alert-info">This job is closed and no longer accepts applications.</p>
           )}
 
+          {message && <p className="alert alert-success">{message}</p>}
+
           {canApply && (
             <section className="apply-box">
               <h2>Apply for this job</h2>
@@ -123,7 +129,6 @@ export default function JobDetail() {
                   />
                 </div>
                 {applyError && <p className="alert alert-error">{applyError}</p>}
-                {message && <p className="alert alert-success">{message}</p>}
                 <button className="btn btn-primary" type="submit" disabled={applying}>
                   {applying ? 'Submitting...' : 'Submit application'}
                 </button>
