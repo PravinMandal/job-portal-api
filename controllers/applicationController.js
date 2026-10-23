@@ -30,10 +30,12 @@ async function applyToJob(req, res, next) {
       return res.status(409).json({ success: false, message: 'You have already applied to this job' });
     }
 
+    const coverLetter = req.body && req.body.coverLetter ? req.body.coverLetter.trim() : '';
+
     const application = await Application.create({
       job: job._id,
       candidate: req.user._id,
-      coverLetter: req.body.coverLetter ? req.body.coverLetter.trim() : '',
+      coverLetter,
     });
 
     await application.populate('job', 'title companyName location type salary status');
@@ -113,8 +115,9 @@ async function updateApplicationStatus(req, res, next) {
       });
     }
 
-    const nextStatus = req.body.status;
-    if (!ALLOWED_TRANSITIONS[application.status].includes(nextStatus)) {
+    const nextStatus = req.body && req.body.status;
+    const allowedNext = ALLOWED_TRANSITIONS[application.status] || [];
+    if (!allowedNext.includes(nextStatus)) {
       return res.status(400).json({
         success: false,
         message: `An application cannot move from ${application.status} to ${nextStatus}`,

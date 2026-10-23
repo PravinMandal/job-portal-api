@@ -70,7 +70,7 @@ async function getJobs(req, res, next) {
 
     const [data, total] = await Promise.all([
       Job.find(filter)
-        .sort({ [sortField]: sortOrder })
+        .sort({ [sortField]: sortOrder, _id: -1 })
         .skip(skip)
         .limit(limit)
         .populate('postedBy', 'name companyName'),
@@ -113,11 +113,12 @@ async function updateJob(req, res, next) {
       return res.status(403).json({ success: false, message: 'You can only update your own jobs' });
     }
 
+    const body = req.body || {};
     const allowed = ['title', 'description', 'companyName', 'location', 'type', 'salary', 'skills'];
     const updates = {};
     for (const field of allowed) {
-      if (req.body[field] !== undefined) {
-        updates[field] = req.body[field];
+      if (body[field] !== undefined) {
+        updates[field] = body[field];
       }
     }
 

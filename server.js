@@ -6,6 +6,11 @@ const port = Number(process.env.PORT) || 3000;
 let server;
 
 async function start() {
+  const secret = process.env.JWT_SECRET || '';
+  if (!secret || secret === 'replace-with-a-long-random-secret') {
+    throw new Error('JWT_SECRET must be set to a private random value');
+  }
+
   await connectDB();
   server = app.listen(port, () => console.log(`API listening on port ${port}`));
 }

@@ -4,6 +4,26 @@ const JOB_TYPES = ['full-time', 'part-time', 'internship', 'remote'];
 const APPLICATION_STATUSES = ['applied', 'shortlisted', 'rejected', 'hired'];
 const SORT_FIELDS = ['createdAt', '-createdAt', 'salary', '-salary', 'title', '-title'];
 
+// express-validator checks every item when a value is an array, so repeated
+// query fields or array bodies could slip through as a list. Scalars should
+// arrive as a single value. The skills field is the one exception.
+function singleValueInput(req, res, next) {
+  for (const [key, value] of Object.entries(req.body || {})) {
+    if (key === 'skills') continue;
+    if (Array.isArray(value) || (value !== null && typeof value === 'object')) {
+      return res.status(400).json({ success: false, message: `${key} must be a single value` });
+    }
+  }
+
+  for (const [key, value] of Object.entries(req.query || {})) {
+    if (Array.isArray(value) || (value !== null && typeof value === 'object')) {
+      return res.status(400).json({ success: false, message: `${key} must be a single value` });
+    }
+  }
+
+  return next();
+}
+
 function handleValidation(req, res, next) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -17,12 +37,18 @@ function handleValidation(req, res, next) {
 
 const registerRules = [
   body('name')
+    .isString()
+    .withMessage('Name must be a string')
+    .bail()
     .trim()
     .notEmpty()
     .withMessage('Name is required')
     .isLength({ max: 80 })
     .withMessage('Name cannot exceed 80 characters'),
   body('email')
+    .isString()
+    .withMessage('Email must be a string')
+    .bail()
     .trim()
     .notEmpty()
     .withMessage('Email is required')
@@ -37,6 +63,9 @@ const registerRules = [
     .withMessage('Password must be at least 6 characters'),
   body('role')
     .optional()
+    .isString()
+    .withMessage('Role must be a string')
+    .bail()
     .isIn(['candidate', 'employer'])
     .withMessage('Role must be either candidate or employer'),
   body('companyName').custom((value, { req }) => {
@@ -53,12 +82,20 @@ const registerRules = [
 
 const loginRules = [
   body('email')
+    .isString()
+    .withMessage('Email must be a string')
+    .bail()
     .trim()
     .notEmpty()
     .withMessage('Email is required')
     .isEmail()
     .withMessage('Please provide a valid email address'),
-  body('password').notEmpty().withMessage('Password is required'),
+  body('password')
+    .isString()
+    .withMessage('Password must be a string')
+    .bail()
+    .notEmpty()
+    .withMessage('Password is required'),
   handleValidation,
 ];
 
@@ -67,12 +104,18 @@ const applicationIdParam = param('id').isMongoId().withMessage('Invalid applicat
 
 const createJobRules = [
   body('title')
+    .isString()
+    .withMessage('Job title must be a string')
+    .bail()
     .trim()
     .notEmpty()
     .withMessage('Job title is required')
     .isLength({ max: 100 })
     .withMessage('Job title cannot exceed 100 characters'),
   body('description')
+    .isString()
+    .withMessage('Description must be a string')
+    .bail()
     .trim()
     .notEmpty()
     .withMessage('Description is required')
@@ -80,16 +123,25 @@ const createJobRules = [
     .withMessage('Description cannot exceed 5000 characters'),
   body('companyName')
     .optional()
+    .isString()
+    .withMessage('Company name must be a string')
+    .bail()
     .trim()
     .isLength({ max: 100 })
     .withMessage('Company name cannot exceed 100 characters'),
   body('location')
+    .isString()
+    .withMessage('Location must be a string')
+    .bail()
     .trim()
     .notEmpty()
     .withMessage('Location is required')
     .isLength({ max: 100 })
     .withMessage('Location cannot exceed 100 characters'),
   body('type')
+    .isString()
+    .withMessage('Job type must be a string')
+    .bail()
     .notEmpty()
     .withMessage('Job type is required')
     .isIn(JOB_TYPES)
@@ -99,6 +151,8 @@ const createJobRules = [
     .withMessage('Salary is required')
     .isFloat({ gt: 0 })
     .withMessage('Salary must be a positive number')
+    .custom((value) => Number.isFinite(Number(value)))
+    .withMessage('Salary must be a finite number')
     .toFloat(),
   body('skills')
     .optional()
@@ -117,6 +171,9 @@ const createJobRules = [
 const updateJobRules = [
   body('title')
     .optional()
+    .isString()
+    .withMessage('Job title must be a string')
+    .bail()
     .trim()
     .notEmpty()
     .withMessage('Job title cannot be empty')
@@ -124,6 +181,9 @@ const updateJobRules = [
     .withMessage('Job title cannot exceed 100 characters'),
   body('description')
     .optional()
+    .isString()
+    .withMessage('Description must be a string')
+    .bail()
     .trim()
     .notEmpty()
     .withMessage('Description cannot be empty')
@@ -131,6 +191,9 @@ const updateJobRules = [
     .withMessage('Description cannot exceed 5000 characters'),
   body('companyName')
     .optional()
+    .isString()
+    .withMessage('Company name must be a string')
+    .bail()
     .trim()
     .notEmpty()
     .withMessage('Company name cannot be empty')
@@ -138,6 +201,9 @@ const updateJobRules = [
     .withMessage('Company name cannot exceed 100 characters'),
   body('location')
     .optional()
+    .isString()
+    .withMessage('Location must be a string')
+    .bail()
     .trim()
     .notEmpty()
     .withMessage('Location cannot be empty')
@@ -145,12 +211,17 @@ const updateJobRules = [
     .withMessage('Location cannot exceed 100 characters'),
   body('type')
     .optional()
+    .isString()
+    .withMessage('Job type must be a string')
+    .bail()
     .isIn(JOB_TYPES)
     .withMessage('Job type must be full-time, part-time, internship or remote'),
   body('salary')
     .optional()
     .isFloat({ gt: 0 })
     .withMessage('Salary must be a positive number')
+    .custom((value) => Number.isFinite(Number(value)))
+    .withMessage('Salary must be a finite number')
     .toFloat(),
   body('skills')
     .optional()
@@ -167,20 +238,49 @@ const updateJobRules = [
 ];
 
 const listJobsRules = [
-  query('search').optional().trim().isLength({ max: 100 }).withMessage('Search is too long'),
-  query('location').optional().trim().isLength({ max: 100 }).withMessage('Location is too long'),
+  query('search')
+    .optional()
+    .isString()
+    .withMessage('Search must be a string')
+    .bail()
+    .trim()
+    .isLength({ max: 100 })
+    .withMessage('Search is too long'),
+  query('location')
+    .optional()
+    .isString()
+    .withMessage('Location must be a string')
+    .bail()
+    .trim()
+    .isLength({ max: 100 })
+    .withMessage('Location is too long'),
   query('type')
     .optional()
+    .isString()
+    .withMessage('Job type must be a string')
+    .bail()
     .isIn(JOB_TYPES)
     .withMessage('Job type must be full-time, part-time, internship or remote'),
-  query('skill').optional().trim().isLength({ max: 50 }).withMessage('Skill is too long'),
+  query('skill')
+    .optional()
+    .isString()
+    .withMessage('Skill must be a string')
+    .bail()
+    .trim()
+    .isLength({ max: 50 })
+    .withMessage('Skill is too long'),
   query('minSalary')
     .optional()
     .isFloat({ min: 0 })
     .withMessage('Minimum salary must be a positive number')
+    .custom((value) => Number.isFinite(Number(value)))
+    .withMessage('Minimum salary must be a finite number')
     .toFloat(),
   query('sort')
     .optional()
+    .isString()
+    .withMessage('Sort must be a string')
+    .bail()
     .isIn(SORT_FIELDS)
     .withMessage(`Sort must be one of: ${SORT_FIELDS.join(', ')}`),
   query('page')
@@ -211,6 +311,9 @@ const jobApplicationsRules = [
   jobIdParam,
   query('status')
     .optional()
+    .isString()
+    .withMessage('Status must be a string')
+    .bail()
     .isIn(APPLICATION_STATUSES)
     .withMessage('Status must be applied, shortlisted, rejected or hired'),
   handleValidation,
@@ -219,6 +322,9 @@ const jobApplicationsRules = [
 const updateStatusRules = [
   applicationIdParam,
   body('status')
+    .isString()
+    .withMessage('Status must be a string')
+    .bail()
     .notEmpty()
     .withMessage('Status is required')
     .isIn(APPLICATION_STATUSES)
@@ -231,6 +337,7 @@ const applicationIdRules = [applicationIdParam, handleValidation];
 
 module.exports = {
   JOB_TYPES,
+  singleValueInput,
   APPLICATION_STATUSES,
   registerRules,
   loginRules,
